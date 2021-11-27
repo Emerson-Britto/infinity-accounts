@@ -1,21 +1,24 @@
 import { createStore } from "vuex";
 import { BtnStates } from "@/common/enums";
-
-const FORM_SIGN_UP_PAGE_TOTAL = 2;
+import { signUpService } from "@/common/signUpService";
 
 export default createStore({
   state: {
     formType: BtnStates.SIGNIN,
     formSignUpStep: 0,
+    formSignUpMaxStep: 1, // start with 0
+    asyncErrors: {
+      mailAlreadyExists: false,
+    },
     formDataSignUp: {
-      name: null,
-      lastName: null,
+      name: "",
+      lastName: "",
       gender: "Male",
-      birthDate: null,
-      displayName: null,
-      mail: null,
-      password: null,
-      rePassword: null,
+      birthDate: "",
+      displayName: "",
+      mail: "",
+      password: "",
+      rePassword: "",
     },
   },
   mutations: {
@@ -30,12 +33,12 @@ export default createStore({
       if (backStep && state.formSignUpStep) {
         state.formSignUpStep--;
         return;
-      } else if (
-        !backStep &&
-        state.formSignUpStep < FORM_SIGN_UP_PAGE_TOTAL - 1
-      ) {
+      } else if (!backStep && state.formSignUpStep < state.formSignUpMaxStep) {
         state.formSignUpStep++;
       }
+    },
+    VERIFY_MAIL_FIELD(state, mailExist) {
+      state.asyncErrors.mailAlreadyExists = Boolean(mailExist);
     },
   },
   actions: {
@@ -45,11 +48,18 @@ export default createStore({
     signUpNextStep({ commit }, option = {}) {
       commit("NEXT_STEP_FORM_SIGN_UP", option);
     },
+    verifyMailField({ commit }, mailInput) {
+      signUpService.verifyMailExists(mailInput).then((mailExist) => {
+        commit("VERIFY_MAIL_FIELD", mailExist);
+      });
+    },
   },
   getters: {
     formType: (state) => state.formType,
+    formSignUpMaxStep: (state) => state.formSignUpMaxStep,
     formSignUpStep: (state) => state.formSignUpStep,
     formDataSignUp: (state) => state.formDataSignUp,
+    mailExist: (state) => state.asyncErrors.mailAlreadyExists,
   },
   modules: {},
 });

@@ -1,79 +1,131 @@
 <template>
-  <form id="form">
-    <div>
-      <div class="form-group">
-        <label for="userName" class="input-labels">Username</label>
-        <input
-          id="userName"
-          v-model="formData.displayName"
-          class="input-data"
-          type="text"
-          name="input-mail"
-          maxlength="20"
-          placeholder="Ex: Alexa"
-        />
-      </div>
-      <app-infor-message text="name too short!"></app-infor-message>
-      <app-infor-message text="Username already exists"></app-infor-message>
-
-      <div class="form-group">
-        <label for="inMail" class="input-labels">E-mail</label>
-        <input
-          id="inMail"
-          v-model="formData.mail"
-          class="input-data"
-          type="email"
-          name="input-mail"
-          maxlength="40"
-          placeholder="Ex: alexashione@gmail.com"
-        />
-      </div>
-      <app-infor-message text="invalid mail"></app-infor-message>
-      <app-infor-message text="mail already exists"></app-infor-message>
-
-      <div class="form-group">
-        <label for="inPassword" class="input-labels">Password</label>
-        <input
-          id="inPassword"
-          v-model="formData.password"
-          class="input-data"
-          type="password"
-          name="input-password"
-          maxlength="30"
-          placeholder="Your password"
-        />
-      </div>
-      <app-infor-message
-        text="Minimum: 8 characters, one uppercase and lowercase letter, one number and one special character"
-      >
-      </app-infor-message>
-
-      <div class="form-group">
-        <label for="inRePassword" class="input-labels">re-Password</label>
-        <input
-          id="inRePassword"
-          v-model="formData.rePassword"
-          class="input-data"
-          type="password"
-          name="input-password"
-          maxlength="30"
-          placeholder="Your password"
-        />
-      </div>
-      <app-infor-message text="password no match!"></app-infor-message>
+  <Form id="form" :validation-schema="schema" @submit="submit">
+    <div class="form-group">
+      <label for="userName" class="input-labels">Username</label>
+      <Field
+        id="userName"
+        v-model="formData.displayName"
+        class="input-data"
+        type="text"
+        name="displayName"
+        maxlength="18"
+        placeholder="Ex: AlexaShi"
+      />
     </div>
-  </form>
+    <ErrorMessage class="msg-error" name="displayName" />
+
+    <div class="form-group">
+      <label for="inMail" class="input-labels">E-mail</label>
+      <Field
+        id="inMail"
+        v-model="formData.mail"
+        class="input-data"
+        type="email"
+        name="email"
+        maxlength="34"
+        placeholder="Ex: alexashione@gmail.com"
+        @input="(e) => updateMailField(e.target.value)"
+      />
+    </div>
+    <ErrorMessage class="msg-error" name="email" />
+    <p v-if="mailExist" class="msg-error">email already exist</p>
+
+    <div class="form-group">
+      <label for="inPassword" class="input-labels">Password</label>
+      <Field
+        id="inPassword"
+        v-model="formData.password"
+        class="input-data"
+        type="password"
+        name="password"
+        maxlength="30"
+        placeholder="Your password"
+      />
+    </div>
+    <ErrorMessage class="msg-error" name="password" />
+
+    <div class="form-group">
+      <label for="inRePassword" class="input-labels">re-Password</label>
+      <Field
+        id="inRePassword"
+        v-model="formData.rePassword"
+        class="input-data"
+        type="password"
+        name="rePassword"
+        maxlength="30"
+        placeholder="Your password"
+      />
+    </div>
+    <ErrorMessage class="msg-error" name="rePassword" />
+
+    <section class="actions-btns">
+      <button class="btn-form-submit" @click="backStep()">Back</button>
+      <button class="btn-form-submit">Sign Up</button>
+    </section>
+  </Form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import store from "@/store";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 
 export default defineComponent({
   name: "AccountDataForm",
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
+  data: () => ({
+    noMatches: "password no matches",
+    passwordError: "Mininus one uppercase and lowercase letter, one number and special character",
+  }),
   computed: {
     formData() {
       return store.getters.formDataSignUp;
+    },
+    schema() {
+      return yup.object({
+        displayName: yup.string().required().min(4).max(14),
+        email: yup.string().required().email(),
+        password: yup
+          .string()
+          .required()
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
+            this.passwordError
+          )
+          .matches(store.getters.formDataSignUp.rePassword, this.noMatches)
+          .min(8),
+        rePassword: yup
+          .string()
+          .required()
+          .matches(store.getters.formDataSignUp.password, this.noMatches)
+          .min(8),
+      });
+    },
+    mailExist() {
+      return store.getters.mailExist;
+    },
+  },
+  methods: {
+    passwordMatches(value: string): boolean | string {
+      if (value !== this.formData.password) {
+        return true;
+      }
+      return "Password No Matches";
+    },
+    updateMailField(valueInput: string): void {
+      store.dispatch("verifyMailField", valueInput);
+      return;
+    },
+    backStep() {
+      store.dispatch("signUpNextStep", { backStep: true });
+    },
+    submit() {
+      return;
     },
   },
 });
@@ -82,6 +134,7 @@ export default defineComponent({
 #form {
   margin-top: 10px;
   display: flex;
+  text-align: center;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
@@ -122,5 +175,40 @@ export default defineComponent({
 
 .input-disable {
   display: none;
+}
+
+.msg-error {
+  font-size: 0.9em;
+  margin: 0 10px;
+  color: #c22526;
+}
+
+.actions-btns {
+  margin: 0 auto;
+  text-align: center;
+  width: 60%;
+}
+
+.btn-form-submit {
+  margin: 20px 10px;
+  border: none;
+  cursor: pointer;
+  color: #e0dfde;
+  font-size: 1.1em;
+  background-color: transparent;
+  padding: 5px 10px;
+  border: 2px solid #e0dfde;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  transition: 500ms;
+}
+
+.btn-form-submit:hover {
+  background-color: #e0dfde;
+  color: #000;
+}
+
+.btn-form-submit:disabled {
+  opacity: 50%;
+  cursor: not-allowed;
 }
 </style>
