@@ -1,5 +1,5 @@
 <template>
-  <Form id="form" :validation-schema="schema" @submit="submit">
+  <Form id="form" :validation-schema="schema" @submit="submit()">
     <div class="form-group">
       <label for="userName" class="input-labels">Username</label>
       <Field
@@ -28,7 +28,15 @@
       />
     </div>
     <ErrorMessage class="msg-error" name="email" />
-    <p v-if="mailExist" class="msg-error">email already exist</p>
+    <p v-if="mailExist" class="msg-error">email already exist. try Sign In</p>
+    <p v-if="checkingMail" class="msg-alert">
+      Checking if mail already exist...
+    </p>
+    <span>
+      <h1 v-if="!checkingMail" class="msg-alert">
+        * A verification email will be sent
+      </h1>
+    </span>
 
     <div class="form-group">
       <label for="inPassword" class="input-labels">Password</label>
@@ -60,7 +68,7 @@
 
     <section class="actions-btns">
       <button class="btn-form-submit" @click="backStep()">Back</button>
-      <button class="btn-form-submit">Sign Up</button>
+      <button class="btn-form-submit" @click="submit()">Sign Up</button>
     </section>
   </Form>
 </template>
@@ -79,8 +87,10 @@ export default defineComponent({
     ErrorMessage,
   },
   data: () => ({
+    showAlertMail: true,
     noMatches: "password no matches",
-    passwordError: "Mininus one uppercase and lowercase letter, one number and special character",
+    passwordError:
+      "Mininus one uppercase and lowercase letter, one number and special character",
   }),
   computed: {
     formData() {
@@ -94,7 +104,7 @@ export default defineComponent({
           .string()
           .required()
           .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
             this.passwordError
           )
           .matches(store.getters.formDataSignUp.rePassword, this.noMatches)
@@ -108,6 +118,9 @@ export default defineComponent({
     },
     mailExist() {
       return store.getters.mailExist;
+    },
+    checkingMail() {
+      return store.getters.checkingMail;
     },
   },
   methods: {
@@ -125,7 +138,8 @@ export default defineComponent({
       store.dispatch("signUpNextStep", { backStep: true });
     },
     submit() {
-      return;
+      if (this.mailExist && this.checkingMail) return;
+      console.log({ ...this.formData });
     },
   },
 });
@@ -175,6 +189,11 @@ export default defineComponent({
 
 .input-disable {
   display: none;
+}
+
+.msg-alert {
+  font-size: 0.8em;
+  margin: 5px 0;
 }
 
 .msg-error {

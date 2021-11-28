@@ -9,6 +9,7 @@ export default createStore({
     formSignUpMaxStep: 1, // start with 0
     asyncErrors: {
       mailAlreadyExists: false,
+      checkingMail: false,
     },
     formDataSignUp: {
       name: "",
@@ -38,7 +39,8 @@ export default createStore({
       }
     },
     VERIFY_MAIL_FIELD(state, mailExist) {
-      state.asyncErrors.mailAlreadyExists = Boolean(mailExist);
+      state.asyncErrors.mailAlreadyExists = mailExist === true;
+      state.asyncErrors.checkingMail = false;
     },
   },
   actions: {
@@ -49,6 +51,7 @@ export default createStore({
       commit("NEXT_STEP_FORM_SIGN_UP", option);
     },
     verifyMailField({ commit }, mailInput) {
+      this.state.asyncErrors.checkingMail = true;
       signUpService.verifyMailExists(mailInput).then((mailExist) => {
         commit("VERIFY_MAIL_FIELD", mailExist);
       });
@@ -60,6 +63,7 @@ export default createStore({
     formSignUpStep: (state) => state.formSignUpStep,
     formDataSignUp: (state) => state.formDataSignUp,
     mailExist: (state) => state.asyncErrors.mailAlreadyExists,
+    checkingMail: (state) => state.asyncErrors.checkingMail,
   },
   modules: {},
 });

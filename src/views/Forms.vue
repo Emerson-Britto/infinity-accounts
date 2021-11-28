@@ -1,8 +1,9 @@
 <template>
   <section id="container">
     <section class="loginOption">
-      <h2 class="instructionText">To continue, log in to Musiky.</h2>
-      <section class="allOptions">
+      <h2 class="instructionText">To continue, log in to Account Center.</h2>
+      <h1 class="branding_in">INFINITY</h1>
+      <section v-if="false" class="allOptions">
         <div class="boxOption">
           <img
             id="optionImg"
@@ -68,6 +69,11 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
+@font-face {
+  font-family: Padauk-Regular;
+  src: url("../assets/fonts/Padauk-Regular.ttf");
+}
+
 #container {
   background-color: rgb(0 0 0 /60%);
   border: 2px solid;
@@ -86,6 +92,12 @@ export default defineComponent({
 
   .instructionText {
     font-size: 1em;
+  }
+
+  .branding_in {
+    font-family: "Padauk-Regular";
+    font-size: 1.5em;
+    margin: 20px 0;
   }
 
   .allOptions {

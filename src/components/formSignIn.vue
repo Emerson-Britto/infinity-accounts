@@ -10,7 +10,6 @@
         placeholder="Your email"
       />
     </div>
-    <app-infor-message text="invalid email"></app-infor-message>
 
     <div class="form-group flexColumnStartMode">
       <label for="inPassword" class="input-labels">Password</label>
@@ -22,7 +21,6 @@
         placeholder="Your password"
       />
     </div>
-    <app-infor-message text="incorrect password"></app-infor-message>
 
     <button type="submit" class="btn-form-submit">Login</button>
   </form>
