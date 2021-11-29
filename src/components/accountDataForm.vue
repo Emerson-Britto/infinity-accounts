@@ -134,12 +134,12 @@ export default defineComponent({
       store.dispatch("verifyMailField", valueInput);
       return;
     },
-    backStep() {
+    backStep(): void {
       store.dispatch("signUpNextStep", { backStep: true });
     },
-    submit() {
-      if (this.mailExist && this.checkingMail) return;
-      console.log({ ...this.formData });
+    submit(): void {
+      this.$router.push({ name: "About" });
+      store.dispatch("formSignUpSubmit");
     },
   },
 });

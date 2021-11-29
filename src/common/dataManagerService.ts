@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const CLOUDFLARE = "https://www.cloudflare.com/cdn-cgi/trace";
+//const CLOUDFLARE = "https://www.cloudflare.com/cdn-cgi/trace";
+//const IPIFY = "https://api.ipify.org/?format=json";
+const FUCK_IP_GUYS = "https://wtfismyip.com/json";
 
 export interface deviceData {
   userAgent: string;
@@ -18,24 +20,19 @@ export interface deviceData {
 
 interface DataManagerType {
   getlocalInfor(): any;
-  getDeviceData(): deviceData;
+  getDeviceData(): Promise<deviceData>;
 }
 
 class DataManager implements DataManagerType {
   getlocalInfor(): any {
-    return axios.get<any>(CLOUDFLARE).then((res) => {
-      const data = res.data;
+    return axios.get<any>(FUCK_IP_GUYS).then((res) => {
+      const locationData = res.data;
 
-      const ipRegex = /[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/;
-      const locRegex = /loc=[A-Z]*/;
-      const ip = data.match(ipRegex)[0];
-      const loc = data.match(locRegex)[0];
-
-      return { ip: new String(ip) + "", loc: new String(loc) + "" };
+      return locationData;
     });
   }
-  getDeviceData(): deviceData {
-    return this.getlocalInfor().then((localDeviceInfor: any) => {
+  getDeviceData(): Promise<deviceData> {
+    return this.getlocalInfor().then((locationData: any) => {
       const userAgent = navigator.userAgent;
       const platform = navigator.platform;
       const appCodeName = navigator.appCodeName;
@@ -44,7 +41,6 @@ class DataManager implements DataManagerType {
       const language = navigator.language;
       const doNotTrack = navigator.doNotTrack;
       const cookieEnabled = navigator.cookieEnabled;
-      const localInfor = localDeviceInfor;
 
       return {
         userAgent,
@@ -57,7 +53,7 @@ class DataManager implements DataManagerType {
           doNotTrack,
           cookieEnabled,
         },
-        localInfor,
+        locationData,
       };
     });
   }

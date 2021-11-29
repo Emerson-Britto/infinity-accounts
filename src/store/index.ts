@@ -10,6 +10,7 @@ export default createStore({
     asyncErrors: {
       mailAlreadyExists: false,
       checkingMail: false,
+      requestError: false,
     },
     formDataSignUp: {
       name: "",
@@ -55,6 +56,15 @@ export default createStore({
       signUpService.verifyMailExists(mailInput).then((mailExist) => {
         commit("VERIFY_MAIL_FIELD", mailExist);
       });
+    },
+    formSignUpSubmit({ commit }) {
+      if (
+        this.state.asyncErrors.mailAlreadyExists &&
+        this.state.asyncErrors.checkingMail
+      ) {
+        return;
+      }
+      console.log({ ...this.state.formDataSignUp });
     },
   },
   getters: {
