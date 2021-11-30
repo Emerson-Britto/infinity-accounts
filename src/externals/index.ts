@@ -15,4 +15,5 @@ export const getIcon: getIconUrl = {
   github: () => `${BaseUrl}imgs/branding/github.svg`,
   apple: () => `${BaseUrl}imgs/branding/apple.svg`,
   icon_expand_more: () => `${BaseUrl}icons/expand_more_white_24dp.svg`,
+  sendMail: () => `${BaseUrl}imgs/repository/sendMail.png`,
 };

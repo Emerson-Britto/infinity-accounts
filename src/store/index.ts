@@ -22,6 +22,7 @@ export default createStore({
       password: "#Y1q8uw2a",
       rePassword: "#Y1q8uw2a",
     },
+    verificationCodeField: "",
   },
   mutations: {
     UPDATE_FORM_TYPE(state) {
@@ -78,6 +79,7 @@ export default createStore({
     formDataSignUp: (state) => state.formDataSignUp,
     mailExist: (state) => state.asyncErrors.mailAlreadyExists,
     checkingMail: (state) => state.asyncErrors.checkingMail,
+    verificationCodeField: (state) => state.verificationCodeField,
   },
   modules: {},
 });
