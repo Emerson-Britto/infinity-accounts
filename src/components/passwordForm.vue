@@ -1,46 +1,36 @@
 <template>
-  <Form id="form" :validation-schema="schema">
+  <Form id="form" :validation-schema="schema" @submit="submit()">
     <div class="form-group">
-      <label for="userName" class="input-labels">Username</label>
+      <label for="inPassword" class="input-labels">Password</label>
       <Field
-        id="userName"
-        v-model="formData.displayName"
+        id="inPassword"
+        v-model="formData.password"
         class="input-data"
-        type="text"
-        name="displayName"
-        maxlength="18"
-        placeholder="Ex: AlexaShi"
+        type="password"
+        name="password"
+        maxlength="30"
+        placeholder="Your password"
       />
     </div>
-    <ErrorMessage class="msg-error" name="displayName" />
+    <ErrorMessage class="msg-error" name="password" />
 
     <div class="form-group">
-      <label for="inMail" class="input-labels">E-mail</label>
+      <label for="inRePassword" class="input-labels">re-Password</label>
       <Field
-        id="inMail"
-        v-model="formData.mail"
+        id="inRePassword"
+        v-model="formData.rePassword"
         class="input-data"
-        type="email"
-        name="email"
-        maxlength="34"
-        placeholder="Ex: alexashione@gmail.com"
-        @input="(e) => updateMailField(e.target.value)"
+        type="password"
+        name="rePassword"
+        maxlength="30"
+        placeholder="Your password"
       />
     </div>
-    <ErrorMessage class="msg-error" name="email" />
-    <p v-if="mailExist" class="msg-error">email already exist. try Sign In</p>
-    <p v-if="checkingMail" class="msg-alert">
-      Checking if mail already exist...
-    </p>
-    <span>
-      <h1 v-if="!checkingMail" class="msg-alert">
-        * A verification email will be sent
-      </h1>
-    </span>
+    <ErrorMessage class="msg-error" name="rePassword" />
 
     <section class="actions-btns">
       <button class="btn-form-submit" @click="backStep()">Back</button>
-      <button class="btn-form-submit" @click.prevent="nextStep()">Next</button>
+      <button class="btn-form-submit" @click="submit()">Sign Up</button>
     </section>
   </Form>
 </template>
@@ -52,14 +42,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
 export default defineComponent({
-  name: "AccountDataForm",
+  name: "PasswordForm",
   components: {
     Form,
     Field,
     ErrorMessage,
   },
   data: () => ({
-    showAlertMail: true,
     noMatches: "password no matches",
     passwordError:
       "Mininus one uppercase and lowercase letter, one number and special character",
@@ -70,30 +59,37 @@ export default defineComponent({
     },
     schema() {
       return yup.object({
-        displayName: yup.string().required().min(4).max(14),
-        email: yup.string().required().email(),
+        password: yup
+          .string()
+          .required()
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
+            this.passwordError
+          )
+          .matches(store.getters.formDataSignUp.rePassword, this.noMatches)
+          .min(8),
+        rePassword: yup
+          .string()
+          .required()
+          .matches(store.getters.formDataSignUp.password, this.noMatches)
+          .min(8),
       });
-    },
-    mailExist() {
-      return store.getters.mailExist;
-    },
-    checkingMail() {
-      return store.getters.checkingMail;
     },
   },
   methods: {
-    updateMailField(valueInput: string): void {
-      store.dispatch("verifyMailField", valueInput);
-      return;
+    passwordMatches(value: string): boolean | string {
+      if (value !== this.formData.password) {
+        return true;
+      }
+      return "Password No Matches";
     },
     backStep(): void {
       store.dispatch("signUpNextStep", { backStep: true });
     },
-    nextStep(): void {
-      if (this.checkingMail || this.mailExist) {
-        return;
-      }
-      store.dispatch("signUpNextStep");
+    submit(): void {
+      store.dispatch("formSignUpSubmit").then(() => {
+        this.$router.push({ name: "verification" });
+      });
     },
   },
 });

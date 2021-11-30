@@ -1,7 +1,9 @@
 export interface SignUpForm {
-  nameField: string,
-  lastNameField: string,
-  userName: string;
+  name: string;
+  lastName: string;
+  gender: string;
+  birthDate: string;
+  displayName: string;
   mail: string;
   password: string;
   rePassword: string;

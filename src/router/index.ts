@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Forms from "../views/Forms.vue";
+import VerificationForm from "../views/VerificationForm.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -8,10 +9,15 @@ const routes: Array<RouteRecordRaw> = [
     component: Forms,
   },
   {
-    path: "/about",
-    name: "About",
+    path: "/verification",
+    name: "verification",
+    component: VerificationForm,
+  },
+  {
+    path: "/v",
+    name: "v",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+      import(/* webpackChunkName: "about" */ "../views/VerificationForm.vue"),
   },
 ];
 

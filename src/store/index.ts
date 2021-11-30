@@ -6,21 +6,21 @@ export default createStore({
   state: {
     formType: BtnStates.SIGNIN,
     formSignUpStep: 0,
-    formSignUpMaxStep: 1, // start with 0
+    formSignUpMaxStep: 2, // start with 0
     asyncErrors: {
       mailAlreadyExists: false,
       checkingMail: false,
       requestError: false,
     },
     formDataSignUp: {
-      name: "",
-      lastName: "",
+      name: "gffdssf",
+      lastName: "fhgdff",
       gender: "Male",
-      birthDate: "",
-      displayName: "",
-      mail: "",
-      password: "",
-      rePassword: "",
+      birthDate: "2003-04-03",
+      displayName: "fgfgddgfhfghfg",
+      mail: "fhffhgfhfgfgd@gmail.com",
+      password: "#Y1q8uw2a",
+      rePassword: "#Y1q8uw2a",
     },
   },
   mutations: {
@@ -64,7 +64,11 @@ export default createStore({
       ) {
         return;
       }
-      console.log({ ...this.state.formDataSignUp });
+      return signUpService
+        .createAccount({ ...this.state.formDataSignUp })
+        .then((res) => {
+          console.log(res);
+        });
     },
   },
   getters: {

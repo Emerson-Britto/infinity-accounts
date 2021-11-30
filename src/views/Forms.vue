@@ -7,7 +7,7 @@
         <div class="boxOption">
           <img
             id="optionImg"
-            :src="branding('google')"
+            :src="getIcon('google')"
             alt="login With Google"
           />
           <p id="optionName">Google</p>
@@ -15,7 +15,7 @@
         <div class="boxOption">
           <img
             id="optionImg"
-            :src="branding('github')"
+            :src="getIcon('github')"
             alt="login With GitHub"
           />
           <p id="optionName">GitHub</p>
@@ -23,13 +23,13 @@
         <div class="boxOption">
           <img
             id="optionImg"
-            :src="branding('twitter')"
+            :src="getIcon('twitter')"
             alt="login With Twitter"
           />
           <p id="optionName">Twitter</p>
         </div>
         <div class="boxOption">
-          <img id="optionImg" :src="branding('apple')" alt="login With Apple" />
+          <img id="optionImg" :src="getIcon('apple')" alt="login With Apple" />
           <p id="optionName">Apple</p>
         </div>
       </section>
@@ -62,7 +62,7 @@ export default defineComponent({
     },
   },
   methods: {
-    branding(iconName: string): string {
+    getIcon(iconName: string): string {
       return getIcon[iconName]();
     },
   },
@@ -80,7 +80,7 @@ export default defineComponent({
   border-image: linear-gradient(135deg, #000, #fff, #000) 1;
   width: 440px;
   height: auto;
-  margin-bottom: 30px;
+  margin: 50px auto;
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }
