@@ -9,6 +9,11 @@ export interface SignUpForm {
   rePassword: string;
 }
 
+export interface SignInForm {
+  mail: string;
+  password: string;
+}
+
 export interface dataExists {
   userName: boolean;
   mail: boolean;

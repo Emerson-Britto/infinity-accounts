@@ -1,6 +1,6 @@
 import axios from "axios";
 import { dataManager } from "./dataManagerService";
-import { SignUpForm, dataExists } from "./interface/signUpForm.interface";
+import { SignUpForm, dataExists } from "./interface/form.interface";
 
 //const API = "https://infinity-api-nex.herokuapp.com/msk/account";
 const LOCAL_API = "http://localhost:1234/msk/account";
