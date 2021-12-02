@@ -1,45 +1,97 @@
 <template>
-  <form id="form" class="flexColumnCenterMode">
+  <Form id="form" :validation-schema="schema" @submit="submit()">
     <div class="form-group flexColumnStartMode">
       <label for="inMail" class="input-labels">E-mail</label>
-      <input
+      <Field
         id="inMail"
+        v-model="formData.mail"
         class="input-data"
         type="email"
-        name="input-mail"
+        name="mail"
         placeholder="Your email"
       />
     </div>
+    <ErrorMessage class="msg-error" name="mail" />
 
     <div class="form-group flexColumnStartMode">
       <label for="inPassword" class="input-labels">Password</label>
-      <input
+      <Field
         id="inPassword"
+        v-model="formData.password"
         class="input-data"
         type="password"
-        name="input-password"
+        name="password"
         placeholder="Your password"
       />
     </div>
+    <ErrorMessage class="msg-error" name="password" />
 
     <button type="submit" class="btn-form-submit">Login</button>
-  </form>
+  </Form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import store from "@/store";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 
 export default defineComponent({
   name: "FormSignIn",
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
+  data: () => ({
+    passwordError:
+      "Mininus one uppercase and lowercase letter, one number and special character",
+  }),
+  computed: {
+    formData() {
+      return store.getters.formData;
+    },
+    schema() {
+      return yup.object({
+        mail: yup.string().required().email(),
+        password: yup
+          .string()
+          .required()
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
+            this.passwordError
+          )
+          .min(8),
+      });
+    },
+  },
+  methods: {
+    submit(): void {
+      store
+        .dispatch("formSignInSubmit")
+        .then((res) => {
+          console.log(res);
+          alert("OK");
+        })
+        .catch((err) => {
+          if (err.request.status == 428) {
+            this.$router.push({ name: "verification" });
+            return;
+          }
+
+          if (err.request.status == 401) {
+            alert("invalid mail or password");
+          }
+        });
+    },
+  },
 });
 </script>
 <style scoped lang="scss">
 #form {
   margin-top: 10px;
-}
-
-.flexColumnCenterMode {
   display: flex;
+  text-align: center;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
@@ -77,8 +129,14 @@ export default defineComponent({
   border-bottom: 2px solid #858586;
 }
 
+.msg-error {
+  font-size: 0.9em;
+  margin: 0 10px;
+  color: #c22526;
+}
+
 .btn-form-submit {
-  margin: 10px 0 15px 0;
+  margin: 15px 0;
   border: none;
   cursor: pointer;
   color: #e0dfde;

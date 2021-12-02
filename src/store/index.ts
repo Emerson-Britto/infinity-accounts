@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import { BtnStates } from "@/common/enums";
-import { signUpService } from "@/common/signUpService";
+import { formService } from "@/common/formService";
 
 export default createStore({
   state: {
@@ -12,7 +12,7 @@ export default createStore({
       checkingMail: false,
       requestError: false,
     },
-    formDataSignUp: {
+    formData: {
       name: "gffdssf",
       lastName: "fhgdff",
       gender: "Male",
@@ -21,8 +21,8 @@ export default createStore({
       mail: "fhffhgfhfgfgd@gmail.com",
       password: "#Y1q8uw2a",
       rePassword: "#Y1q8uw2a",
+      verificationCodeField: "",
     },
-    verificationCodeField: "",
   },
   mutations: {
     UPDATE_FORM_TYPE(state) {
@@ -54,32 +54,39 @@ export default createStore({
     },
     verifyMailField({ commit }, mailInput) {
       this.state.asyncErrors.checkingMail = true;
-      signUpService.verifyMailExists(mailInput).then((mailExist) => {
+      formService.verifyMailExists(mailInput).then((mailExist) => {
         commit("VERIFY_MAIL_FIELD", mailExist);
       });
     },
-    formSignUpSubmit({ commit }) {
+    formSignInSubmit() {
+      const { mail, password } = this.state.formData;
+      return formService.login({ mail, password });
+    },
+    formSignUpSubmit() {
       if (
         this.state.asyncErrors.mailAlreadyExists &&
         this.state.asyncErrors.checkingMail
       ) {
         return;
       }
-      return signUpService
-        .createAccount({ ...this.state.formDataSignUp })
+      return formService
+        .createAccount({ ...this.state.formData })
         .then((res) => {
           console.log(res);
         });
+    },
+    verifyCode() {
+      const { mail, verificationCodeField } = this.state.formData;
+      return formService.checkCode(mail, verificationCodeField);
     },
   },
   getters: {
     formType: (state) => state.formType,
     formSignUpMaxStep: (state) => state.formSignUpMaxStep,
     formSignUpStep: (state) => state.formSignUpStep,
-    formDataSignUp: (state) => state.formDataSignUp,
+    formData: (state) => state.formData,
     mailExist: (state) => state.asyncErrors.mailAlreadyExists,
     checkingMail: (state) => state.asyncErrors.checkingMail,
-    verificationCodeField: (state) => state.verificationCodeField,
   },
   modules: {},
 });

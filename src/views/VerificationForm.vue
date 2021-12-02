@@ -6,7 +6,7 @@
     <label for="codeField" class="input-labels">Code</label>
     <Field
       id="codeField"
-      v-model="verificationCodeField"
+      v-model="formData.verificationCodeField"
       class="input-data"
       type="text"
       name="codeField"
@@ -17,7 +17,7 @@
 
     <section>
       <button class="btn-form-submit" @click="backForm()">Back</button>
-      <button class="btn-form-submit" @click="verifty()">Confirm</button>
+      <button class="btn-form-submit">Confirm</button>
     </section>
   </Form>
 </template>
@@ -37,11 +37,8 @@ export default defineComponent({
     ErrorMessage,
   },
   computed: {
-    verificationCodeField() {
-      return store.getters.verificationCodeField;
-    },
     formData() {
-      return store.getters.formDataSignUp;
+      return store.getters.formData;
     },
     schema() {
       return yup.object({
@@ -50,7 +47,7 @@ export default defineComponent({
           .required()
           .min(6)
           .max(6)
-          .matches(/[0-9]{6}/, "only numbers are allowed"),
+          .matches(/[0-9]{6}/, "invalid code"),
       });
     },
   },
@@ -62,7 +59,24 @@ export default defineComponent({
       this.$router.push({ name: "Forms" });
     },
     verifty() {
-      console.log(this.verificationCodeField);
+      store
+        .dispatch("verifyCode")
+        .then((res) => {
+          if (res.request.status == 200) {
+            store.dispatch("formSignInSubmit").then((res) => {
+              console.log(res);
+              alert("OK - verified");
+            });
+          }
+        })
+        .catch((err) => {
+          if (err.request.status == 403) {
+            alert("invalid code");
+          }
+          if (err.request.status == 410) {
+            alert("code expired or never existed");
+          }
+        });
       return;
     },
   },

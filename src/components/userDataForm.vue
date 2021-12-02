@@ -62,7 +62,7 @@ export default defineComponent({
   },
   computed: {
     formData() {
-      return store.getters.formDataSignUp;
+      return store.getters.formData;
     },
     schema() {
       return yup.object({

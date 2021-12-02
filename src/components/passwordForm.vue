@@ -30,7 +30,7 @@
 
     <section class="actions-btns">
       <button class="btn-form-submit" @click="backStep()">Back</button>
-      <button class="btn-form-submit" @click="submit()">Sign Up</button>
+      <button class="btn-form-submit">Sign Up</button>
     </section>
   </Form>
 </template>
@@ -55,7 +55,7 @@ export default defineComponent({
   }),
   computed: {
     formData() {
-      return store.getters.formDataSignUp;
+      return store.getters.formData;
     },
     schema() {
       return yup.object({
@@ -66,12 +66,12 @@ export default defineComponent({
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
             this.passwordError
           )
-          .matches(store.getters.formDataSignUp.rePassword, this.noMatches)
+          .matches(store.getters.formData.rePassword, this.noMatches)
           .min(8),
         rePassword: yup
           .string()
           .required()
-          .matches(store.getters.formDataSignUp.password, this.noMatches)
+          .matches(store.getters.formData.password, this.noMatches)
           .min(8),
       });
     },
