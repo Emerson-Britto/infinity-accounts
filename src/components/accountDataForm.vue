@@ -68,6 +68,9 @@ export default defineComponent({
     formData() {
       return store.getters.formData;
     },
+    onRequest() {
+      return store.getters.onRequest;
+    },
     schema() {
       return yup.object({
         displayName: yup.string().required().min(4).max(14),

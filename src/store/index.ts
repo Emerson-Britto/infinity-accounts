@@ -7,10 +7,11 @@ export default createStore({
     formType: BtnStates.SIGNIN,
     formSignUpStep: 0,
     formSignUpMaxStep: 2, // start with 0
-    asyncErrors: {
+    asyncEvent: {
       mailAlreadyExists: false,
       checkingMail: false,
       requestError: false,
+      onRequest: false,
     },
     formData: {
       name: "gffdssf",
@@ -41,8 +42,16 @@ export default createStore({
       }
     },
     VERIFY_MAIL_FIELD(state, mailExist) {
-      state.asyncErrors.mailAlreadyExists = mailExist === true;
-      state.asyncErrors.checkingMail = false;
+      state.asyncEvent.mailAlreadyExists = mailExist === true;
+      state.asyncEvent.checkingMail = false;
+    },
+    ON_REQUEST(state, status) {
+      state.asyncEvent.onRequest = status;
+    },
+    REQUEST_ERROR(state) {
+      state.asyncEvent.requestError = true;
+      state.asyncEvent.onRequest = false;
+      setTimeout(() => (state.asyncEvent.requestError = false), 5000);
     },
   },
   actions: {
@@ -53,26 +62,44 @@ export default createStore({
       commit("NEXT_STEP_FORM_SIGN_UP", option);
     },
     verifyMailField({ commit }, mailInput) {
-      this.state.asyncErrors.checkingMail = true;
+      commit("ON_REQUEST", true);
+      this.state.asyncEvent.checkingMail = true;
       formService.verifyMailExists(mailInput).then((mailExist) => {
+        commit("ON_REQUEST", false);
         commit("VERIFY_MAIL_FIELD", mailExist);
       });
     },
-    formSignInSubmit() {
+    formSignInSubmit({ commit }) {
+      commit("ON_REQUEST", true);
       const { mail, password } = this.state.formData;
-      return formService.login({ mail, password });
+      return formService
+        .login({ mail, password })
+        .then((res) => {
+          commit("ON_REQUEST", false);
+          return res;
+        })
+        .catch((err) => {
+          commit("REQUEST_ERROR");
+          return err;
+        });
     },
-    formSignUpSubmit() {
+    formSignUpSubmit({ commit }) {
       if (
-        this.state.asyncErrors.mailAlreadyExists &&
-        this.state.asyncErrors.checkingMail
+        this.state.asyncEvent.mailAlreadyExists &&
+        this.state.asyncEvent.checkingMail
       ) {
         return;
       }
+      commit("ON_REQUEST", true);
       return formService
         .createAccount({ ...this.state.formData })
         .then((res) => {
-          console.log(res);
+          commit("ON_REQUEST", false);
+          return res;
+        })
+        .catch((err) => {
+          commit("REQUEST_ERROR");
+          return err;
         });
     },
     verifyCode() {
@@ -85,8 +112,10 @@ export default createStore({
     formSignUpMaxStep: (state) => state.formSignUpMaxStep,
     formSignUpStep: (state) => state.formSignUpStep,
     formData: (state) => state.formData,
-    mailExist: (state) => state.asyncErrors.mailAlreadyExists,
-    checkingMail: (state) => state.asyncErrors.checkingMail,
+    mailExist: (state) => state.asyncEvent.mailAlreadyExists,
+    checkingMail: (state) => state.asyncEvent.checkingMail,
+    onRequest: (state) => state.asyncEvent.onRequest,
+    requestError: (state) => state.asyncEvent.requestError,
   },
   modules: {},
 });

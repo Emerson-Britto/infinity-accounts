@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section>
+    <section id="viewPort">
       <UserDataForm v-if="formSignUpStep === 0"></UserDataForm>
       <AccountDataForm v-if="formSignUpStep === 1"></AccountDataForm>
       <PasswordForm v-if="formSignUpStep === 2"></PasswordForm>
@@ -29,4 +29,8 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+#viewPort {
+  text-align: center;
+}
+</style>

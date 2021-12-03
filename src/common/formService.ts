@@ -10,17 +10,17 @@ class FormService {
     const { mail, password } = newUser;
     const deviceData = await dataManager.getDeviceData();
 
-    return axios
-      .post<SignInForm>(`${LOCAL_API}/login`, { mail, password, deviceData })
-      .then((res) => res.data);
+    return axios.post<SignInForm>(`${LOCAL_API}/login`, {
+      mail,
+      password,
+      deviceData,
+    });
   }
 
   async createAccount(newUser: SignUpForm): Promise<any> {
     const deviceData = await dataManager.getDeviceData();
 
-    return axios
-      .post(`${LOCAL_API}/create`, { newUser, deviceData })
-      .then((res) => res.data);
+    return axios.post(`${LOCAL_API}/create`, { newUser, deviceData });
   }
 
   async verifyMailExists(mail: string): Promise<any> {

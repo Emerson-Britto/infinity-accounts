@@ -28,15 +28,17 @@
     </div>
     <ErrorMessage class="msg-error" name="rePassword" />
 
-    <section class="actions-btns">
+    <section v-show="!onRequest" class="actions-btns">
       <button class="btn-form-submit" @click="backStep()">Back</button>
       <button class="btn-form-submit">Sign Up</button>
     </section>
+    <LoadingForm v-if="onRequest"></LoadingForm>
   </Form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -47,6 +49,7 @@ export default defineComponent({
     Form,
     Field,
     ErrorMessage,
+    LoadingForm,
   },
   data: () => ({
     noMatches: "password no matches",
@@ -56,6 +59,9 @@ export default defineComponent({
   computed: {
     formData() {
       return store.getters.formData;
+    },
+    onRequest() {
+      return store.getters.onRequest;
     },
     schema() {
       return yup.object({
@@ -87,8 +93,10 @@ export default defineComponent({
       store.dispatch("signUpNextStep", { backStep: true });
     },
     submit(): void {
-      store.dispatch("formSignUpSubmit").then(() => {
-        this.$router.push({ name: "verification" });
+      store.dispatch("formSignUpSubmit").then((res) => {
+        if (res.request.status == 201) {
+          this.$router.push({ name: "verification" });
+        }
       });
     },
   },

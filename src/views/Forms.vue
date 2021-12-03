@@ -1,44 +1,53 @@
 <template>
-  <section id="container">
-    <section class="loginOption">
-      <h2 class="instructionText">To continue, log in to Account Center.</h2>
-      <h1 class="branding_in">INFINITY</h1>
-      <section v-if="false" class="allOptions">
-        <div class="boxOption">
-          <img
-            id="optionImg"
-            :src="getIcon('google')"
-            alt="login With Google"
-          />
-          <p id="optionName">Google</p>
-        </div>
-        <div class="boxOption">
-          <img
-            id="optionImg"
-            :src="getIcon('github')"
-            alt="login With GitHub"
-          />
-          <p id="optionName">GitHub</p>
-        </div>
-        <div class="boxOption">
-          <img
-            id="optionImg"
-            :src="getIcon('twitter')"
-            alt="login With Twitter"
-          />
-          <p id="optionName">Twitter</p>
-        </div>
-        <div class="boxOption">
-          <img id="optionImg" :src="getIcon('apple')" alt="login With Apple" />
-          <p id="optionName">Apple</p>
-        </div>
+  <div id="viewPort">
+    <section id="container">
+      <section class="loginOption">
+        <h2 class="instructionText">To continue, log in to Account Center.</h2>
+        <h1 class="branding_in">INFINITY</h1>
+        <section v-if="false" class="allOptions">
+          <div class="boxOption">
+            <img
+              id="optionImg"
+              :src="getIcon('google')"
+              alt="login With Google"
+            />
+            <p id="optionName">Google</p>
+          </div>
+          <div class="boxOption">
+            <img
+              id="optionImg"
+              :src="getIcon('github')"
+              alt="login With GitHub"
+            />
+            <p id="optionName">GitHub</p>
+          </div>
+          <div class="boxOption">
+            <img
+              id="optionImg"
+              :src="getIcon('twitter')"
+              alt="login With Twitter"
+            />
+            <p id="optionName">Twitter</p>
+          </div>
+          <div class="boxOption">
+            <img
+              id="optionImg"
+              :src="getIcon('apple')"
+              alt="login With Apple"
+            />
+            <p id="optionName">Apple</p>
+          </div>
+        </section>
       </section>
+      <hr />
+      <FormSwitch></FormSwitch>
+      <FormSignIn v-if="formType == 'Sign In'"></FormSignIn>
+      <FormSignUp v-if="formType == 'Sign Up'"></FormSignUp>
     </section>
-    <hr />
-    <FormSwitch></FormSwitch>
-    <FormSignIn v-if="formType == 'Sign In'"></FormSignIn>
-    <FormSignUp v-if="formType == 'Sign Up'"></FormSignUp>
-  </section>
+    <section v-show="requestError" id="box_requestError">
+      <h1 id="title_requestError">Ocorreu um erro, tente novamente</h1>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -60,6 +69,9 @@ export default defineComponent({
     formType() {
       return store.getters.formType;
     },
+    requestError() {
+      return store.getters.requestError;
+    },
   },
   methods: {
     getIcon(iconName: string): string {
@@ -74,13 +86,29 @@ export default defineComponent({
   src: url("../assets/fonts/Padauk-Regular.ttf");
 }
 
+#viewPort {
+  text-align: center;
+}
+
+#box_requestError {
+  border: 2px solid #830000;
+  border-radius: 8px;
+  background-color: #0f0000;
+  margin: 0 auto;
+  width: 260px;
+}
+
+#title_requestError {
+  margin: 5px 0;
+}
+
 #container {
   background-color: rgb(0 0 0 /60%);
   border: 2px solid;
   border-image: linear-gradient(135deg, #000, #fff, #000) 1;
   width: 440px;
   height: auto;
-  margin: 50px auto;
+  margin: 50px auto 30px auto;
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }

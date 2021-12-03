@@ -2,6 +2,7 @@
   <Form id="container" :validation-schema="schema" @submit="verifty()">
     <img class="sendMail_icon" :src="getIcon('sendMail')" />
     <h1>A verification email was send to {{ formData.mail }}</h1>
+    <p class="obs_note">expires in 15 minutes</p>
 
     <label for="codeField" class="input-labels">Code</label>
     <Field
@@ -15,15 +16,17 @@
     />
     <ErrorMessage class="msg-error" name="codeField" />
 
-    <section>
+    <section v-show="!onRequest">
       <button class="btn-form-submit" @click="backForm()">Back</button>
       <button class="btn-form-submit">Confirm</button>
     </section>
+    <LoadingForm v-if="onRequest"></LoadingForm>
   </Form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -35,10 +38,14 @@ export default defineComponent({
     Form,
     Field,
     ErrorMessage,
+    LoadingForm,
   },
   computed: {
     formData() {
       return store.getters.formData;
+    },
+    onRequest() {
+      return store.getters.onRequest;
     },
     schema() {
       return yup.object({
@@ -86,6 +93,11 @@ export default defineComponent({
 @font-face {
   font-family: Padauk-Regular;
   src: url("../assets/fonts/Padauk-Regular.ttf");
+}
+
+.obs_note {
+  margin: 10px 0;
+  color: #6b6a71;
 }
 
 #container {

@@ -26,12 +26,17 @@
     </div>
     <ErrorMessage class="msg-error" name="password" />
 
-    <button type="submit" class="btn-form-submit">Login</button>
+    <button v-show="!onRequest" type="submit" class="btn-form-submit">
+      Login
+    </button>
+
+    <LoadingForm v-show="onRequest"></LoadingForm>
   </Form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -42,12 +47,16 @@ export default defineComponent({
     Form,
     Field,
     ErrorMessage,
+    LoadingForm,
   },
   data: () => ({
     passwordError:
       "Mininus one uppercase and lowercase letter, one number and special character",
   }),
   computed: {
+    onRequest() {
+      return store.getters.onRequest;
+    },
     formData() {
       return store.getters.formData;
     },
@@ -67,22 +76,22 @@ export default defineComponent({
   },
   methods: {
     submit(): void {
-      store
-        .dispatch("formSignInSubmit")
-        .then((res) => {
-          console.log(res);
+      store.dispatch("formSignInSubmit").then((res) => {
+        console.log(res);
+        if (res.request.status == 428) {
+          this.$router.push({ name: "verification" });
+          return;
+        }
+        if (res.request.status == 401) {
+          alert("invalid mail or password");
+          return;
+        }
+        if (res.request.status == 200) {
+          console.log(res.data);
           alert("OK");
-        })
-        .catch((err) => {
-          if (err.request.status == 428) {
-            this.$router.push({ name: "verification" });
-            return;
-          }
-
-          if (err.request.status == 401) {
-            alert("invalid mail or password");
-          }
-        });
+          return;
+        }
+      });
     },
   },
 });
