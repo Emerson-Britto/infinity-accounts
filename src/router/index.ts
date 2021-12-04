@@ -14,10 +14,10 @@ const routes: Array<RouteRecordRaw> = [
     component: VerificationForm,
   },
   {
-    path: "/v",
-    name: "v",
+    path: "/myaccount",
+    name: "myAccount",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/VerificationForm.vue"),
+      import(/* webpackChunkName: "myAccount" */ "../views/myAccount.vue"),
   },
 ];
 

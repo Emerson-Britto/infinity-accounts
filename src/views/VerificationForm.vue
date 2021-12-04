@@ -28,6 +28,7 @@
 import { defineComponent } from "vue";
 import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
+import { Storage } from "@/common/storage";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { getIcon } from "@/externals";
@@ -71,7 +72,8 @@ export default defineComponent({
         .then((res) => {
           if (res.request.status == 200) {
             store.dispatch("formSignInSubmit").then((res) => {
-              console.log(res);
+              console.log(res.data.ACCESS_TOKEN);
+              Storage.set("USER_SD_ACCESS", res.data.ACCESS_TOKEN);
               alert("OK - verified");
             });
           }
