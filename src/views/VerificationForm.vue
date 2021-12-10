@@ -73,8 +73,9 @@ export default defineComponent({
           if (res.request.status == 200) {
             store.dispatch("formSignInSubmit").then((res) => {
               console.log(res.data.ACCESS_TOKEN);
+              console.log(this.$router);
               Storage.set("USER_SD_ACCESS", res.data.ACCESS_TOKEN);
-              alert("OK - verified");
+              this.$router.push({ name: "myAccount" });
             });
           }
         })

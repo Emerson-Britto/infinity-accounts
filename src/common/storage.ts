@@ -1,3 +1,5 @@
+const tokenSlotName = "USER_SD_ACCESS";
+
 export class Storage {
   constructor() {
     throw Error("No");
@@ -22,5 +24,18 @@ export class Storage {
 
   static getLength(): number {
     return localStorage.length;
+  }
+
+  static setToken(token: string): void {
+    localStorage.setItem(tokenSlotName, JSON.stringify(token));
+  }
+
+  static hasToken(): boolean {
+    return Boolean(localStorage.getItem(tokenSlotName));
+  }
+
+  static getToken(): string {
+    const data: any = localStorage.getItem(tokenSlotName);
+    return JSON.parse(data);
   }
 }

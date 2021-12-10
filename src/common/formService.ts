@@ -32,6 +32,10 @@ class FormService {
   async checkCode(mail: string, code: string): Promise<any> {
     return axios.get(`${LOCAL_API}/verifyMail?mail=${mail}&code=${code}`);
   }
+
+  async createFastToken(acesssToken: string, after_url: string): Promise<any> {
+    return axios.get(`${LOCAL_API}/createFastToken?accessToken=${acesssToken}&afterUrl=${after_url}`);
+  }
 }
 
 export const formService = new FormService();
