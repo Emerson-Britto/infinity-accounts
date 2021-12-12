@@ -87,9 +87,7 @@ export default defineComponent({
           return;
         }
         if (res.request.status == 200) {
-          console.log(res.data.ACCESS_TOKEN);
           Storage.set("USER_SD_ACCESS", res.data.ACCESS_TOKEN);
-          console.log(this.$router);
           this.$router.push({ name: "myAccount" });
           return;
         }

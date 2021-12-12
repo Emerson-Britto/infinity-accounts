@@ -34,7 +34,9 @@ class FormService {
   }
 
   async createFastToken(acesssToken: string, after_url: string): Promise<any> {
-    return axios.get(`${LOCAL_API}/createFastToken?accessToken=${acesssToken}&afterUrl=${after_url}`);
+    return axios.get(
+      `${LOCAL_API}/createFastToken?accessToken=${acesssToken}&afterUrl=${after_url}`
+    );
   }
 }
 

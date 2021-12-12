@@ -26,7 +26,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "myAccount" */ "../views/myAccount.vue"),
     beforeEnter: (to, from, next) => {
+      const after = from.query["after"] ? from.query["after"] : "";
       if (!Storage.hasToken()) next({ name: "Forms" });
+      else if (after) next({ name: "SSO", query: { after } });
       else next();
     },
   },
@@ -36,8 +38,10 @@ const routes: Array<RouteRecordRaw> = [
     component: Forms,
     beforeEnter: async (to, from, next) => {
       console.log({ from, to });
-      if (!Storage.hasToken() || !to.query.after) next({ name: "Forms" });
-      else {
+      if (!Storage.hasToken() || !to.query.after) {
+        const after = to.query["after"] ? to.query["after"] : "";
+        next({ name: "Forms", query: { after } });
+      } else {
         const res = await formService
           .createFastToken(Storage.getToken(), String(to.query["after"]))
           .catch((err) => {
