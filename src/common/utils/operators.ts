@@ -1,10 +1,14 @@
-export const debounceTime = (
-  milliseconds: number,
-  fn: () => Promise<any>
-): any => {
-  let timer = 0;
-  return () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(), milliseconds);
-  };
-};
+let TIME = 0;
+
+export function asyncTimeOut(
+  fn: () => Promise<any>,
+  milliseconds: number
+): any {
+  const promise = new Promise(function (resolve) {
+    clearTimeout(TIME);
+    TIME = window.setTimeout(function () {
+      resolve(fn());
+    }, milliseconds);
+  });
+  return promise;
+}

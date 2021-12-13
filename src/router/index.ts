@@ -33,6 +33,16 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/profile",
+    name: "profile",
+    component: () =>
+      import(/* webpackChunkName: "profile" */ "../views/profile.vue"),
+    beforeEnter: (to, from, next) => {
+      if (!Storage.hasToken()) next({ name: "Forms" });
+      else next();
+    },
+  },
+  {
     path: "/sso",
     name: "SSO",
     component: Forms,

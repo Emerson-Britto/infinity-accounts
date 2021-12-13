@@ -14,6 +14,10 @@
   vertical-align: baseline;
 }
 
+h1, p, h2, h3 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
 article,
 aside,
 details,

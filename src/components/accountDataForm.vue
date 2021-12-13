@@ -29,13 +29,11 @@
     </div>
     <ErrorMessage class="msg-error" name="email" />
     <p v-if="mailExist" class="msg-error">email already exist. try Sign In</p>
-    <p v-if="checkingMail" class="msg-alert">
+    <!--<p v-if="checkingMail" class="msg-alert">
       Checking if mail already exist...
-    </p>
+    </p>-->
     <span>
-      <h1 v-if="!checkingMail" class="msg-alert">
-        * A verification email will be sent
-      </h1>
+      <h1 class="msg-alert">* A verification email will be sent</h1>
     </span>
 
     <section class="actions-btns">
