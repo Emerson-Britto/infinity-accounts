@@ -18,4 +18,12 @@ export const getIcon: getIconUrl = {
   sendMail: () => `${BaseUrl}imgs/repository/sendMail.png`,
   mailIcon: () => `${BaseUrl}icons/email_white_24dp.svg`,
   historyIcon: () => `${BaseUrl}icons/history_white_24dp.svg`,
+
+  personIcon: () => `${BaseUrl}icons/person_white_24dp.svg`,
+  calendarIcon: () => `${BaseUrl}icons/calendar_month_white_24dp.svg`,
+  callIcon: () => `${BaseUrl}icons/call_white_24dp.svg`,
+  sentiment_satisfiedIcon: () =>
+    `${BaseUrl}icons/sentiment_satisfied_white_24dp.svg`,
+  flagIcon: () => `${BaseUrl}icons/flag_white_24dp.svg`,
+  languageIcon: () => `${BaseUrl}icons/language_white_24dp.svg`,
 };

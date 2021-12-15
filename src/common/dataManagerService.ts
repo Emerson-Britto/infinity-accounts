@@ -25,11 +25,7 @@ interface DataManagerType {
 
 class DataManager implements DataManagerType {
   getlocalInfor(): any {
-    return axios.get<any>(FUCK_IP_GUYS).then((res) => {
-      const locationData = res.data;
-
-      return locationData;
-    });
+    return axios.get<any>(FUCK_IP_GUYS).then((res) => res.data);
   }
   getDeviceData(): Promise<deviceData> {
     return this.getlocalInfor().then((locationData: any) => {

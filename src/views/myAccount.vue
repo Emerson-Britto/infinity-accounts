@@ -1,15 +1,15 @@
 <template>
   <section id="viewPort">
     <section id="accountOptions_grid">
-      <div class="options profile">
+      <router-link to="profile" class="options profile">
         <img
           class="profile_Img"
-          src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.KUAzRGnSiinY1r9ngZ9pTwHaHa%26pid%3DApi&f=1"
+          src="http://localhost:9872/static/imgs/defaultProfileImg/profile_default_blue.png"
           alt="profile imagem"
         />
-        <h1 class="profile_displayName">Emerson-Britto</h1>
-        <p class="profile_mail">emersonbritto987@gmail.com</p>
-      </div>
+        <h1 class="profile_displayName">{{ displayName }}</h1>
+        <p class="profile_mail">{{ mail }}</p>
+      </router-link>
       <div class="options recover"></div>
       <div class="options privacity"></div>
       <div class="options security"></div>
@@ -22,9 +22,26 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { accountDataService } from "@/common/accountDataService";
+import { Storage } from "@/common/storage";
 
 export default defineComponent({
   name: "MyAccount",
+  data() {
+    return {
+      displayName: null,
+      mail: null,
+    };
+  },
+  beforeCreate() {
+    accountDataService
+      .getAccountData(Storage.getToken(), "account")
+      .then((res) => {
+        const { account } = res.data;
+        this.displayName = account.displayName;
+        this.mail = account.mail;
+      });
+  },
 });
 </script>
 <style scoped lang="scss">

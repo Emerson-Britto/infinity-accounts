@@ -2,7 +2,7 @@
   <section class="wrapper">
     <section class="personal_infors">
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('personIcon')" />
         <div class="input_field">
           <label class="input_label" for="mail_input">Name</label>
           <input
@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('calendarIcon')" />
         <div class="input_field">
           <label class="input_label" for="mail_input">Birth Day</label>
           <input
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('callIcon')" />
         <div class="input_field">
           <label class="input_label" for="mail_input">Phone Number</label>
           <input
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('sentiment_satisfiedIcon')" />
         <div class="input_field">
           <label class="input_label" for="mail_input">NickName</label>
           <input
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('flagIcon')" />
         <div class="input_field">
           <label class="input_label" for="mail_input">Country</label>
           <input
@@ -72,9 +72,9 @@
         </div>
       </div>
       <div class="personal_infors_infor">
-        <img class="input_icon" :src="getIcon('mailIcon')" />
+        <img class="input_icon" :src="getIcon('languageIcon')" />
         <div class="input_field">
-          <label class="input_label" for="mail_input">Languagem</label>
+          <label class="input_label" for="mail_input">Language</label>
           <input
             id="mail_input"
             class="data_input"

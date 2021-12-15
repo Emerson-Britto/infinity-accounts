@@ -12,11 +12,40 @@
 import { defineComponent } from "vue";
 import AccountInforGeneral from "@/components/accountInforsGeneral.vue";
 import AccountPersonalInfors from "@/components/accountPersonalInfors.vue";
+import { accountDataService } from "@/common/accountDataService";
+import { Storage } from "@/common/storage";
+
 export default defineComponent({
   name: "Profile",
   components: {
     AccountInforGeneral,
     AccountPersonalInfors,
+  },
+  data() {
+    return {
+      generalInfor: {
+        displayName: null,
+        mail: null,
+        lastSeen: null,
+      },
+      personalInfor: {
+        name: null,
+        birthDay: null,
+        phoneNumber: "no phone number",
+        displayName: null,
+        country: null,
+        language: null,
+      }
+    };
+  },
+  beforeCreate() {
+    accountDataService
+      .getAccountData(Storage.getToken(), "account,currentDevice")
+      .then((res) => {
+        const { account, currentDevice } = res.data;
+        console.log(account);
+        console.log(currentDevice);
+      });
   },
 });
 </script>

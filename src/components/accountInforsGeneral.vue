@@ -3,7 +3,7 @@
     <section class="infors_profile">
       <img
         class="infors_profile_Img"
-        src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.KUAzRGnSiinY1r9ngZ9pTwHaHa%26pid%3DApi&f=1"
+        src="http://localhost:9872/static/imgs/defaultProfileImg/profile_default_blue.png"
         alt="profile imagem"
       />
       <h1 class="infors_profile_displayName">Emerson-Britto</h1>
