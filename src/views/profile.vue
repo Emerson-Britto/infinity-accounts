@@ -1,15 +1,16 @@
 <template>
   <section id="viewPort">
-    <AccountInforGeneral></AccountInforGeneral>
+    <AccountInforGeneral :data="generalInfor"></AccountInforGeneral>
     <button class="default_btn">manager infinity account</button>
     <section class="infors_personal"></section>
     <h2 class="field_label">Personal infors</h2>
-    <AccountPersonalInfors></AccountPersonalInfors>
+    <AccountPersonalInfors :data="personalInfor"></AccountPersonalInfors>
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import moment from 'moment';
 import AccountInforGeneral from "@/components/accountInforsGeneral.vue";
 import AccountPersonalInfors from "@/components/accountPersonalInfors.vue";
 import { accountDataService } from "@/common/accountDataService";
@@ -26,16 +27,16 @@ export default defineComponent({
       generalInfor: {
         displayName: null,
         mail: null,
-        lastSeen: null,
+        lastSeen: "",
       },
       personalInfor: {
-        name: null,
-        birthDay: null,
+        name: "",
+        birthDate: null,
         phoneNumber: "no phone number",
         displayName: null,
-        country: null,
-        language: null,
-      }
+        country: "empty",
+        language: "empty",
+      },
     };
   },
   beforeCreate() {
@@ -43,6 +44,18 @@ export default defineComponent({
       .getAccountData(Storage.getToken(), "account,currentDevice")
       .then((res) => {
         const { account, currentDevice } = res.data;
+
+        this.generalInfor.displayName = account.displayName;
+        this.generalInfor.mail = account.mail;
+        this.generalInfor.lastSeen = moment.unix(account.lastSeen).fromNow();
+
+        this.personalInfor.name = `${account.name} ${account.lastName}`;
+        this.personalInfor.birthDate = account.birthDate;
+        this.personalInfor.phoneNumber = "empty";
+        this.personalInfor.displayName = account.displayName;
+        this.personalInfor.country = "empty";
+        this.personalInfor.language = "empty";
+
         console.log(account);
         console.log(currentDevice);
       });

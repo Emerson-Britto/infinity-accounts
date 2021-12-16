@@ -10,7 +10,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.name"
             readonly
           />
         </div>
@@ -24,7 +24,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.birthDate"
             readonly
           />
         </div>
@@ -38,7 +38,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.phoneNumber"
             readonly
           />
         </div>
@@ -52,7 +52,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.displayName"
             readonly
           />
         </div>
@@ -66,7 +66,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.country"
             readonly
           />
         </div>
@@ -80,7 +80,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.language"
             readonly
           />
         </div>
@@ -95,6 +95,12 @@ import { getIcon } from "@/externals";
 
 export default defineComponent({
   name: "AccountPersonalInfors",
+  props: {
+    data: {
+      default: () => ({}),
+      type: Object,
+    },
+  },
   methods: {
     getIcon(iconName: string): string {
       return getIcon[iconName]();
@@ -111,6 +117,7 @@ export default defineComponent({
   border-radius: 18px;
   width: 80vw;
   height: 300px;
+  margin-bottom: 8vh;
 }
 
 .personal_infors {
@@ -135,6 +142,7 @@ export default defineComponent({
 .input_label {
   font-size: 0.8em;
   color: #989e9e;
+  margin-bottom: 5px;
 }
 
 .input_field {

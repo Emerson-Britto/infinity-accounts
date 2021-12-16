@@ -6,8 +6,8 @@
         src="http://localhost:9872/static/imgs/defaultProfileImg/profile_default_blue.png"
         alt="profile imagem"
       />
-      <h1 class="infors_profile_displayName">Emerson-Britto</h1>
-      <p class="infors_profile_mail">emersonbritto987@gmail.com</p>
+      <h1 class="infors_profile_displayName">{{ data.displayName }}</h1>
+      <p class="infors_profile_mail">{{ data.mail }}</p>
     </section>
     <section class="infors_accounts">
       <div class="infors_accounts_mail">
@@ -19,7 +19,7 @@
             class="data_input"
             type="email"
             name="mail"
-            value="emersonbritto987@gmail.com"
+            :value="data.mail"
             readonly
           />
         </div>
@@ -28,7 +28,7 @@
         <img class="historyIcon" :src="getIcon('historyIcon')" />
         <div class="input_field">
           <label class="input_label" for="lastSeen">Last Seen</label>
-          <p id="lastSeen" class="lastSeen">Last seen on 6 minutes ago</p>
+          <p id="lastSeen" class="lastSeen">{{ data.lastSeen }}</p>
         </div>
       </div>
     </section>
@@ -41,6 +41,12 @@ import { getIcon } from "@/externals";
 
 export default defineComponent({
   name: "AccountInforGeneral",
+  props: {
+    data: {
+      default: () => ({}),
+      type: Object,
+    },
+  },
   methods: {
     getIcon(iconName: string): string {
       return getIcon[iconName]();
@@ -111,6 +117,7 @@ export default defineComponent({
 .input_label {
   font-size: 0.8em;
   color: #989e9e;
+  margin-bottom: 5px;
 }
 
 .input_field {

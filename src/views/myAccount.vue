@@ -49,7 +49,7 @@ export default defineComponent({
   margin: 0;
   display: grid;
   place-items: center;
-  width: 100vw;
+  width: 99vw;
   height: 100vh;
 }
 
