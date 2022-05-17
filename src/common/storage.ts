@@ -1,41 +1,45 @@
-const tokenSlotName = "USER_SD_ACCESS";
+/* eslint-disable */
+class Storage {
+  tokenSlotName: string;
 
-export class Storage {
   constructor() {
-    throw Error("No");
+    this.tokenSlotName = "__USER_TK";
   }
 
-  static set(key: string, data: any): void {
+  set(key: string, data: any): void {
     localStorage.setItem(key, JSON.stringify(data));
   }
 
-  static get(key: string): any {
+  get(key: string): any {
     const data: any = localStorage.getItem(key);
     return JSON.parse(data);
   }
 
-  static del(key: string): void {
+  del(key: string): void {
     localStorage.removeItem(key);
   }
 
-  static reset(): void {
+  reset(): void {
     localStorage.clear();
   }
 
-  static getLength(): number {
+  getLength(): number {
     return localStorage.length;
   }
 
-  static setToken(token: string): void {
-    localStorage.setItem(tokenSlotName, JSON.stringify(token));
+  setToken(token: string): void {
+    localStorage.setItem(this.tokenSlotName, JSON.stringify(token));
   }
 
-  static hasToken(): boolean {
-    return Boolean(localStorage.getItem(tokenSlotName));
+  hasToken(): boolean {
+    return !!localStorage.getItem(this.tokenSlotName);
   }
 
-  static getToken(): string {
-    const data: any = localStorage.getItem(tokenSlotName);
+  getToken(): string {
+    const data: string = localStorage.getItem(this.tokenSlotName) || "";
     return JSON.parse(data);
   }
 }
+
+const storage = new Storage();
+export default storage;

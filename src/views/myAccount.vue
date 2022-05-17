@@ -22,8 +22,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { accountDataService } from "@/common/accountDataService";
-import { Storage } from "@/common/storage";
+import { nordlyApi } from "@/services";
+import storage from "@/common/storage";
 
 export default defineComponent({
   name: "MyAccount",
@@ -34,13 +34,11 @@ export default defineComponent({
     };
   },
   beforeCreate() {
-    accountDataService
-      .getAccountData(Storage.getToken(), "account")
-      .then((res) => {
-        const { account } = res.data;
-        this.displayName = account.displayName;
-        this.mail = account.mail;
-      });
+    nordlyApi.accountData(storage.getToken(), "account").then((res: any) => {
+      const { account } = res.data;
+      this.displayName = account.displayName;
+      this.mail = account.mail;
+    });
   },
 });
 </script>

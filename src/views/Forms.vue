@@ -3,41 +3,7 @@
     <section id="container">
       <section class="loginOption">
         <h2 class="instructionText">To continue, log in to Account Center.</h2>
-        <h1 class="branding_in">INFINITY</h1>
-        <section v-if="false" class="allOptions">
-          <div class="boxOption">
-            <img
-              id="optionImg"
-              :src="getIcon('google')"
-              alt="login With Google"
-            />
-            <p id="optionName">Google</p>
-          </div>
-          <div class="boxOption">
-            <img
-              id="optionImg"
-              :src="getIcon('github')"
-              alt="login With GitHub"
-            />
-            <p id="optionName">GitHub</p>
-          </div>
-          <div class="boxOption">
-            <img
-              id="optionImg"
-              :src="getIcon('twitter')"
-              alt="login With Twitter"
-            />
-            <p id="optionName">Twitter</p>
-          </div>
-          <div class="boxOption">
-            <img
-              id="optionImg"
-              :src="getIcon('apple')"
-              alt="login With Apple"
-            />
-            <p id="optionName">Apple</p>
-          </div>
-        </section>
+        <h1 class="branding_in">NORDLY</h1>
       </section>
       <hr />
       <FormSwitch></FormSwitch>
@@ -53,7 +19,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import store from "@/store";
-import { getIcon } from "@/externals";
+import { istatics } from "@/services";
 import FormSwitch from "@/components/formSwitch.vue";
 import FormSignIn from "@/components/formSignIn.vue";
 import FormSignUp from "@/components/formSignUp.vue";
@@ -74,8 +40,8 @@ export default defineComponent({
     },
   },
   methods: {
-    getIcon(iconName: string): string {
-      return getIcon[iconName]();
+    imgUrl(path: string): string {
+      return istatics.imgUrl({ path });
     },
   },
 });

@@ -1,17 +1,17 @@
 <template>
   <main>
-    <header id="header">
+    <header v-show="false" id="header">
       <router-link to="myaccount">
-        <h1 class="branding_in">INFINITY</h1>
+        <h1 class="branding_in">NORDLY</h1>
       </router-link>
       <div class="shortCuts_list">
         <router-link to="myaccount" class="shortCuts">Home</router-link>
         <router-link to="profile" class="shortCuts">Profile</router-link>
         <router-link to="" class="shortCuts">Security</router-link>
-        <router-link to="" class="shortCuts">Devices</router-link>        
+        <router-link to="" class="shortCuts">Devices</router-link>
       </div>
       <div>
-        <img class="headerIcon" :src="getIcon('accountIcon')" />
+        <img class="headerIcon" :src="iconUrl('account_circle')" />
       </div>
     </header>
     <router-view />
@@ -19,13 +19,13 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { getIcon } from "@/externals";
+import { istatics } from "@/services";
 
 export default defineComponent({
   name: "App",
   methods: {
-    getIcon(iconName: string): string {
-      return getIcon[iconName]();
+    iconUrl(name: string): string {
+      return istatics.iconUrl({ name });
     },
   },
 });
@@ -126,5 +126,4 @@ html {
   width: 30px;
   margin: 0 40px;
 }
-
 </style>

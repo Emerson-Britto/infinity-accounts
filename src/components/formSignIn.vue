@@ -1,6 +1,20 @@
 <template>
   <Form id="form" :validation-schema="schema" @submit="submit()">
     <div class="form-group flexColumnStartMode">
+      <label for="userName" class="input-labels">Username</label>
+      <Field
+        id="userName"
+        v-model="formData.username"
+        class="input-data"
+        type="text"
+        name="displayName"
+        maxlength="18"
+        placeholder="Your Username"
+      />
+    </div>
+    <ErrorMessage class="msg-error" name="displayName" />
+
+    <div class="form-group flexColumnStartMode">
       <label for="inMail" class="input-labels">E-mail</label>
       <Field
         id="inMail"
@@ -12,19 +26,6 @@
       />
     </div>
     <ErrorMessage class="msg-error" name="mail" />
-
-    <div class="form-group flexColumnStartMode">
-      <label for="inPassword" class="input-labels">Password</label>
-      <Field
-        id="inPassword"
-        v-model="formData.password"
-        class="input-data"
-        type="password"
-        name="password"
-        placeholder="Your password"
-      />
-    </div>
-    <ErrorMessage class="msg-error" name="password" />
 
     <button v-show="!onRequest" type="submit" class="btn-form-submit">
       Login
@@ -38,7 +39,7 @@
 import { defineComponent } from "vue";
 import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
-import { Storage } from "@/common/storage";
+import storage from "@/common/storage";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
@@ -50,10 +51,6 @@ export default defineComponent({
     ErrorMessage,
     LoadingForm,
   },
-  data: () => ({
-    passwordError:
-      "Mininus one uppercase and lowercase letter, one number and special character",
-  }),
   computed: {
     onRequest() {
       return store.getters.onRequest;
@@ -64,14 +61,6 @@ export default defineComponent({
     schema() {
       return yup.object({
         mail: yup.string().required().email(),
-        password: yup
-          .string()
-          .required()
-          .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{8,}$/,
-            this.passwordError
-          )
-          .min(8),
       });
     },
   },
@@ -83,11 +72,11 @@ export default defineComponent({
           return;
         }
         if (res.request.status == 401) {
-          alert("invalid mail or password");
+          alert("invalid username or mail");
           return;
         }
         if (res.request.status == 200) {
-          Storage.set("USER_SD_ACCESS", res.data.ACCESS_TOKEN);
+          storage.setToken(res.data.ACCESS_TOKEN);
           this.$router.push({ name: "myAccount" });
           return;
         }
@@ -99,6 +88,7 @@ export default defineComponent({
 <style scoped lang="scss">
 #form {
   margin-top: 10px;
+  width: 100%;
   display: flex;
   text-align: center;
   flex-direction: column;
@@ -114,7 +104,8 @@ export default defineComponent({
 }
 
 .form-group {
-  margin: 10px 0 10px 0;
+  width: 80%;
+  margin: 10px 0;
 }
 
 .input-labels {
@@ -130,7 +121,7 @@ export default defineComponent({
   color: #fff;
   padding: 0 10px;
   border-radius: 10px;
-  width: 300px;
+  width: 100%;
   height: 25px;
 }
 
@@ -154,7 +145,7 @@ export default defineComponent({
   padding: 5px 10px;
   border: 2px solid #fff;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  transition: 500ms;
+  transition: 400ms;
 }
 
 .btn-form-submit:hover {

@@ -1,27 +1,19 @@
 import { createStore } from "vuex";
-import { BtnStates } from "@/common/enums";
-import { formService } from "@/common/formService";
+import { BtnStates } from "../common/enums";
+import { nordlyApi } from "../services";
 
 export default createStore({
   state: {
     formType: BtnStates.SIGNIN,
-    formSignUpStep: 0,
-    formSignUpMaxStep: 2, // start with 0
-    asyncEvent: {
+    events: {
       mailAlreadyExists: false,
       checkingMail: false,
       requestError: false,
       onRequest: false,
     },
     formData: {
-      name: "",
-      lastName: "",
-      gender: "Male",
-      birthDate: "",
-      displayName: "",
+      username: "",
       mail: "",
-      password: "",
-      rePassword: "",
       verificationCodeField: "",
     },
   },
@@ -33,25 +25,17 @@ export default createStore({
       }
       state.formType = BtnStates.SIGNIN;
     },
-    NEXT_STEP_FORM_SIGN_UP(state, { backStep = false }) {
-      if (backStep && state.formSignUpStep) {
-        state.formSignUpStep--;
-        return;
-      } else if (!backStep && state.formSignUpStep < state.formSignUpMaxStep) {
-        state.formSignUpStep++;
-      }
-    },
     VERIFY_MAIL_FIELD(state, mailExist) {
-      state.asyncEvent.mailAlreadyExists = mailExist === true;
-      state.asyncEvent.checkingMail = false;
+      state.events.mailAlreadyExists = mailExist === true;
+      state.events.checkingMail = false;
     },
-    ON_REQUEST(state, status) {
-      state.asyncEvent.onRequest = status;
+    REQUESTING(state, status) {
+      state.events.onRequest = status;
     },
     REQUEST_ERROR(state) {
-      state.asyncEvent.requestError = true;
-      state.asyncEvent.onRequest = false;
-      setTimeout(() => (state.asyncEvent.requestError = false), 5000);
+      state.events.requestError = true;
+      state.events.onRequest = false;
+      setTimeout(() => (state.events.requestError = false), 5000);
     },
   },
   actions: {
@@ -62,60 +46,59 @@ export default createStore({
       commit("NEXT_STEP_FORM_SIGN_UP", option);
     },
     verifyMailField({ commit }, mailInput) {
-      commit("ON_REQUEST", true);
-      this.state.asyncEvent.checkingMail = true;
-      formService.verifyMailExists(mailInput).then((mailExist) => {
-        commit("ON_REQUEST", false);
+      commit("REQUESTING", true);
+      this.state.events.checkingMail = true;
+      nordlyApi.verifyMailExists(mailInput).then((mailExist) => {
+        commit("REQUESTING", false);
         commit("VERIFY_MAIL_FIELD", mailExist);
       });
     },
     formSignInSubmit({ commit }) {
-      commit("ON_REQUEST", true);
-      const { mail, password } = this.state.formData;
-      return formService
-        .login({ mail, password })
-        .then((res) => {
-          commit("ON_REQUEST", false);
+      commit("REQUESTING", true);
+      const { username, mail } = this.state.formData;
+      return nordlyApi
+        .login({ username, mail })
+        .then((res: any) => {
+          commit("REQUESTING", false);
           return res;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           commit("REQUEST_ERROR");
           return err;
         });
     },
     formSignUpSubmit({ commit }) {
       if (
-        this.state.asyncEvent.mailAlreadyExists &&
-        this.state.asyncEvent.checkingMail
+        this.state.events.mailAlreadyExists &&
+        this.state.events.checkingMail
       ) {
         return;
       }
-      commit("ON_REQUEST", true);
-      return formService
+      commit("REQUESTING", true);
+      return nordlyApi
         .createAccount({ ...this.state.formData })
-        .then((res) => {
-          commit("ON_REQUEST", false);
+        .then((res: any) => {
+          commit("REQUESTING", false);
           return res;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           commit("REQUEST_ERROR");
           return err;
         });
     },
     verifyCode() {
-      const { mail, verificationCodeField } = this.state.formData;
-      return formService.checkCode(mail, verificationCodeField);
+      // const { mail, verificationCodeField } = this.state.formData;
+      // return nordlyApi.checkCode(mail, verificationCodeField);
+      return;
     },
   },
   getters: {
     formType: (state) => state.formType,
-    formSignUpMaxStep: (state) => state.formSignUpMaxStep,
-    formSignUpStep: (state) => state.formSignUpStep,
     formData: (state) => state.formData,
-    mailExist: (state) => state.asyncEvent.mailAlreadyExists,
-    checkingMail: (state) => state.asyncEvent.checkingMail,
-    onRequest: (state) => state.asyncEvent.onRequest,
-    requestError: (state) => state.asyncEvent.requestError,
+    mailExist: (state) => state.events.mailAlreadyExists,
+    checkingMail: (state) => state.events.checkingMail,
+    onRequest: (state) => state.events.onRequest,
+    requestError: (state) => state.events.requestError,
   },
   modules: {},
 });

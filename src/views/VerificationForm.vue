@@ -1,44 +1,31 @@
 <template>
-  <Form id="container" :validation-schema="schema" @submit="verifty()">
-    <img class="sendMail_icon" :src="getIcon('sendMail')" />
-    <h1>A verification email was send to {{ formData.mail }}</h1>
-    <p class="obs_note">expires in 15 minutes</p>
-
-    <label for="codeField" class="input-labels">Code</label>
-    <Field
-      id="codeField"
-      v-model="formData.verificationCodeField"
-      class="input-data"
-      type="text"
-      name="codeField"
-      maxlength="6"
-      placeholder="000000"
+  <section id="container">
+    <img
+      class="sendMail_icon"
+      :src="imgUrl('illustrations/undraw_confirmation_re_b6q5.svg')"
     />
-    <ErrorMessage class="msg-error" name="codeField" />
+    <h1 id="step_status">
+      A authorization email was send to {{ formData.mail }}
+    </h1>
+    <p class="obs_note">expires in 5 minutes</p>
 
     <section v-show="!onRequest">
-      <button class="btn-form-submit" @click="backForm()">Back</button>
-      <button class="btn-form-submit">Confirm</button>
+      <button class="btn-form-submit" @click="backForm()">Cancel</button>
     </section>
     <LoadingForm v-if="onRequest"></LoadingForm>
-  </Form>
+  </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
-import { Storage } from "@/common/storage";
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
-import { getIcon } from "@/externals";
+import storage from "@/common/storage";
+import { istatics } from "@/services";
 
 export default defineComponent({
   name: "VerificationForm",
   components: {
-    Form,
-    Field,
-    ErrorMessage,
     LoadingForm,
   },
   computed: {
@@ -48,20 +35,10 @@ export default defineComponent({
     onRequest() {
       return store.getters.onRequest;
     },
-    schema() {
-      return yup.object({
-        codeField: yup
-          .string()
-          .required()
-          .min(6)
-          .max(6)
-          .matches(/[0-9]{6}/, "invalid code"),
-      });
-    },
   },
   methods: {
-    getIcon(iconName: string): string {
-      return getIcon[iconName]();
+    imgUrl(path: string): string {
+      return istatics.imgUrl({ path });
     },
     backForm() {
       this.$router.push({ name: "Forms" });
@@ -69,17 +46,15 @@ export default defineComponent({
     verifty() {
       store
         .dispatch("verifyCode")
-        .then((res) => {
+        .then((res: any) => {
           if (res.request.status == 200) {
             store.dispatch("formSignInSubmit").then((res) => {
-              console.log(res.data.ACCESS_TOKEN);
-              console.log(this.$router);
-              Storage.set("USER_SD_ACCESS", res.data.ACCESS_TOKEN);
+              storage.setToken(res.data.ACCESS_TOKEN);
               this.$router.push({ name: "myAccount" });
             });
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
           if (err.request.status == 403) {
             alert("invalid code");
           }
@@ -87,7 +62,6 @@ export default defineComponent({
             alert("code expired or never existed");
           }
         });
-      return;
     },
   },
 });
@@ -98,7 +72,12 @@ export default defineComponent({
   src: url("../assets/fonts/Padauk-Regular.ttf");
 }
 
+#step_status {
+  margin: 0 25px;
+}
+
 .obs_note {
+  font-size: 0.9em;
   margin: 10px 0;
   color: #6b6a71;
 }
@@ -121,8 +100,8 @@ export default defineComponent({
 }
 
 .sendMail_icon {
-  width: 160px;
-  margin: 20px 0;
+  width: 200px;
+  margin: 50px 0;
 }
 
 .msg-error {

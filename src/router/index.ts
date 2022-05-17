@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { Storage } from "../common/storage";
-import { formService } from "../common/formService";
-import { ShortCutUrl } from "../common/utils/shortcutUrl";
+import storage from "../common/storage";
+import { nordlyApi } from "../services";
+import { urlEncoding } from "../helpers";
 import Forms from "../views/Forms.vue";
 import VerificationForm from "../views/VerificationForm.vue";
 
@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "Forms",
     component: Forms,
     beforeEnter: (to, from, next) => {
-      if (Storage.hasToken()) next({ name: "myAccount" });
+      if (storage.hasToken()) next({ name: "myAccount" });
       else next();
     },
   },
@@ -26,8 +26,8 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "myAccount" */ "../views/myAccount.vue"),
     beforeEnter: (to, from, next) => {
-      const after = from.query["after"] ? from.query["after"] : "";
-      if (!Storage.hasToken()) next({ name: "Forms" });
+      const after = sessionStorage.getItem("__afterUrl");
+      if (!storage.hasToken()) next({ name: "Forms" });
       else if (after) next({ name: "SSO", query: { after } });
       else next();
     },
@@ -35,10 +35,9 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/profile",
     name: "profile",
-    component: () =>
-      import(/* webpackChunkName: "profile" */ "../views/profile.vue"),
+    component: () => import("../views/profile.vue"),
     beforeEnter: (to, from, next) => {
-      if (!Storage.hasToken()) next({ name: "Forms" });
+      if (!storage.hasToken()) next({ name: "Forms" });
       else next();
     },
   },
@@ -47,21 +46,26 @@ const routes: Array<RouteRecordRaw> = [
     name: "SSO",
     component: Forms,
     beforeEnter: async (to, from, next) => {
-      console.log({ from, to });
-      if (!Storage.hasToken() || !to.query.after) {
-        const after = to.query["after"] ? to.query["after"] : "";
-        next({ name: "Forms", query: { after } });
-      } else {
-        const res = await formService
-          .createFastToken(Storage.getToken(), String(to.query["after"]))
-          .catch((err) => {
-            console.error(err);
-            next({ name: "myAccount" });
-          });
-        const TOKEN_QUERY = `?pass=${res.data.KEY}`;
-        const AFTER_URL = ShortCutUrl.normalizeUrl(String(to.query["after"]));
-        window.location.href = AFTER_URL + TOKEN_QUERY;
+      const after = String(to.query["after"] || "");
+      const accessToken = storage.getToken();
+
+      if (!accessToken || !after) {
+        sessionStorage.setItem("__afterUrl", after);
+        return next({ name: "Forms" });
       }
+
+      const fastToken = await nordlyApi
+        .createFastToken(accessToken, after)
+        .then((r: any) => r.data.KEY)
+        .catch((err: any) => {
+          console.error(err);
+          next({ name: "myAccount" });
+        });
+
+      if (!fastToken) return;
+      const passQuery = `?pass=${fastToken}`;
+      const afterUrl = urlEncoding(after).decoder();
+      window.location.href = afterUrl + passQuery;
     },
   },
 ];
