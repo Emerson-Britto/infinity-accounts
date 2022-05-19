@@ -24,8 +24,8 @@ class URLEncoding {
     this.url = this.url.replace(/http:\/\//g, "H1%");
     this.url = this.url.replace(/\//g, "B3%");
     this.url = this.url.replace(/\?/g, "I7%");
-    this.url = this.url.replace(/\=/g, "E3%");
-    this.url = this.url.replace(/\&/g, "E7%");
+    this.url = this.url.replace(/=/g, "E3%");
+    this.url = this.url.replace(/&/g, "E7%");
     this.url = this.url.replace(/www/g, "W1%");
     this.url = this.url.replace(/\.com/g, "E4%");
     this.url = this.url.replace(/\./g, "P3%");

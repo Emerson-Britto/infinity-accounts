@@ -30,21 +30,21 @@
           />
         </div>
         <ErrorMessage class="msg-error" name="email" />
-        <p v-if="mailExist" class="msg-error">
+        <p v-if="events.mailExist" class="msg-error">
           email already exist. try Sign In
         </p>
-        <!--<p v-if="checkingMail" class="msg-alert">
+        <!--<p v-if="events.checkingMail" class="msg-alert">
           Checking if mail already exist...
         </p>-->
         <span>
           <p class="msg-alert">* A authorization email will be sent</p>
         </span>
 
-        <section v-show="!onRequest" class="actions-btns">
+        <section v-show="!events.onRequest" class="actions-btns">
           <button class="btn-form-submit" @click="backStep()">Back</button>
           <button class="btn-form-submit">Sign Up</button>
         </section>
-        <LoadingForm v-if="onRequest"></LoadingForm>
+        <LoadingForm v-if="events.onRequest"></LoadingForm>
       </Form>
     </section>
   </div>
@@ -70,20 +70,14 @@ export default defineComponent({
     formData() {
       return store.getters.formData;
     },
-    onRequest() {
-      return store.getters.onRequest;
+    events() {
+      return store.getters.events;
     },
     schema() {
       return yup.object({
         username: yup.string().required().min(4).max(14),
         email: yup.string().required().email(),
       });
-    },
-    mailExist() {
-      return store.getters.mailExist;
-    },
-    checkingMail() {
-      return store.getters.checkingMail;
     },
   },
   methods: {

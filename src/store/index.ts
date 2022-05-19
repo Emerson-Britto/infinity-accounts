@@ -95,10 +95,7 @@ export default createStore({
   getters: {
     formType: (state) => state.formType,
     formData: (state) => state.formData,
-    mailExist: (state) => state.events.mailAlreadyExists,
-    checkingMail: (state) => state.events.checkingMail,
-    onRequest: (state) => state.events.onRequest,
-    requestError: (state) => state.events.requestError,
+    events: (state) => state.events,
   },
   modules: {},
 });

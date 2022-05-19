@@ -1,5 +1,5 @@
 <template>
-  <section id="container">
+  <section id="container" onload="requestAuthorization()">
     <img
       class="sendMail_icon"
       :src="imgUrl('illustrations/undraw_confirmation_re_b6q5.svg')"
@@ -9,10 +9,10 @@
     </h1>
     <p class="obs_note">expires in 5 minutes</p>
 
-    <section v-show="!onRequest">
+    <section v-show="!events.onRequest">
       <button class="btn-form-submit" @click="backForm()">Cancel</button>
     </section>
-    <LoadingForm v-if="onRequest"></LoadingForm>
+    <LoadingForm v-if="events.onRequest"></LoadingForm>
   </section>
 </template>
 
@@ -22,21 +22,41 @@ import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
 import storage from "@/common/storage";
 import { istatics } from "@/services";
+import { WSCheckMailError } from "@/common/interface";
 
 export default defineComponent({
   name: "VerificationForm",
   components: {
     LoadingForm,
   },
+  created() {
+    this.requestAuthorization();
+  },
+  sockets: {
+    connect() {
+      console.log("socket connected");
+    },
+  },
   computed: {
     formData() {
       return store.getters.formData;
     },
-    onRequest() {
-      return store.getters.onRequest;
+    events() {
+      return store.getters.events;
     },
   },
   methods: {
+    requestAuthorization() {
+      console.log("hi");
+      const socketCode = storage.get("__SOCKET_CODE");
+      this.$socket.client.emit(
+        "checkMail",
+        { socketCode },
+        (res: WSCheckMailError) => {
+          console.log({ checkMailResponse: res }); // "got it"
+        }
+      );
+    },
     imgUrl(path: string): string {
       return istatics.imgUrl({ path });
     },

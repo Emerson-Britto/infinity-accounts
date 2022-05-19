@@ -10,7 +10,7 @@
       <FormSignIn v-if="formType == 'Sign In'"></FormSignIn>
       <FormSignUp v-if="formType == 'Sign Up'"></FormSignUp>
     </section>
-    <section v-show="requestError" id="box_requestError">
+    <section v-show="events.requestError" id="box_requestError">
       <h1 id="title_requestError">Ocorreu um erro, tente novamente</h1>
     </section>
   </div>
@@ -35,8 +35,8 @@ export default defineComponent({
     formType() {
       return store.getters.formType;
     },
-    requestError() {
-      return store.getters.requestError;
+    events() {
+      return store.getters.events;
     },
   },
   methods: {

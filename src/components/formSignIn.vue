@@ -7,12 +7,12 @@
         v-model="formData.username"
         class="input-data"
         type="text"
-        name="displayName"
+        name="username"
         maxlength="18"
         placeholder="Your Username"
       />
     </div>
-    <ErrorMessage class="msg-error" name="displayName" />
+    <ErrorMessage class="msg-error" name="username" />
 
     <div class="form-group flexColumnStartMode">
       <label for="inMail" class="input-labels">E-mail</label>
@@ -27,11 +27,11 @@
     </div>
     <ErrorMessage class="msg-error" name="mail" />
 
-    <button v-show="!onRequest" type="submit" class="btn-form-submit">
+    <button v-show="!events.onRequest" type="submit" class="btn-form-submit">
       Login
     </button>
 
-    <LoadingForm v-show="onRequest"></LoadingForm>
+    <LoadingForm v-show="events.onRequest"></LoadingForm>
   </Form>
 </template>
 
@@ -52,14 +52,15 @@ export default defineComponent({
     LoadingForm,
   },
   computed: {
-    onRequest() {
-      return store.getters.onRequest;
+    events() {
+      return store.getters.events;
     },
     formData() {
       return store.getters.formData;
     },
     schema() {
       return yup.object({
+        username: yup.string().required(),
         mail: yup.string().required().email(),
       });
     },
@@ -67,17 +68,18 @@ export default defineComponent({
   methods: {
     submit(): void {
       store.dispatch("formSignInSubmit").then((res) => {
-        if (res.request.status == 428) {
-          this.$router.push({ name: "verification" });
-          return;
-        }
+        // if (res.request.status == 428) {
+        //   this.$router.push({ name: "verification" });
+        //   return;
+        // }
         if (res.request.status == 401) {
           alert("invalid username or mail");
           return;
         }
         if (res.request.status == 200) {
-          storage.setToken(res.data.ACCESS_TOKEN);
-          this.$router.push({ name: "myAccount" });
+          storage.set("__SOCKET_CODE", res.data.socketCode);
+          this.$router.push({ name: "verification" });
+          // this.$router.push({ name: "myAccount" });
           return;
         }
       });
