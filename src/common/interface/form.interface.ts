@@ -3,7 +3,7 @@ export interface SignUpForm {
   // lastName: string;
   // gender: string;
   // birthDate: string;
-  displayName: string;
+  username: string;
   mail: string;
   // password: string;
   // rePassword: string;

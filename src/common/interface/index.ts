@@ -1,3 +1,7 @@
+export interface Obj {
+  [key: string]: any;
+}
+
 export interface AccountInfor {
   displayName: string;
   mail: string;

@@ -12,9 +12,13 @@
             name="username"
             maxlength="18"
             placeholder="Ex: nexashi, nexa_shii ..."
+            @input="() => verifyInputs()"
           />
         </div>
         <ErrorMessage class="msg-error" name="username" />
+        <p v-if="events.usernameExists" class="msg-error">
+          username already exist.
+        </p>
 
         <div class="form-group flexColumnStartMode">
           <label for="inMail" class="input-labels">E-mail</label>
@@ -26,16 +30,16 @@
             name="email"
             maxlength="34"
             placeholder="Ex: nexashione@gmail.com"
-            @input="(e) => updateMailField(e.target.value)"
+            @input="() => verifyInputs()"
           />
         </div>
         <ErrorMessage class="msg-error" name="email" />
-        <p v-if="events.mailExist" class="msg-error">
+        <p v-if="events.mailExists" class="msg-error">
           email already exist. try Sign In
         </p>
-        <!--<p v-if="events.checkingMail" class="msg-alert">
-          Checking if mail already exist...
-        </p>-->
+        <!--         <p v-if="events.checkingData" class="msg-alert">
+          Checking if data already exist...
+        </p> -->
         <span>
           <p class="msg-alert">* A authorization email will be sent</p>
         </span>
@@ -53,7 +57,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import store from "@/store";
+import storage from "@/common/storage";
 import { Form, Field, ErrorMessage } from "vee-validate";
+import LoadingForm from "@/components/loadingForm.vue";
 import * as yup from "yup";
 
 export default defineComponent({
@@ -62,6 +68,7 @@ export default defineComponent({
     Form,
     Field,
     ErrorMessage,
+    LoadingForm,
   },
   // data: () => ({
   //   showAlertMail: true
@@ -76,21 +83,30 @@ export default defineComponent({
     schema() {
       return yup.object({
         username: yup.string().required().min(4).max(14),
-        email: yup.string().required().email(),
+        email: yup.string().required().email().max(40),
       });
     },
   },
   methods: {
-    updateMailField(valueInput: string): void {
-      store.dispatch("verifyMailField", valueInput);
+    verifyInputs(): void {
+      const username = this.formData.username;
+      const mail = this.formData.mail;
+      if (username.length < 4 || mail.length < 4) return;
+      const form = { username, mail };
+      store.dispatch("verifyField", form);
       return;
     },
     backStep(): void {
       store.dispatch("signUpNextStep", { backStep: true });
     },
     submit(): void {
+      const events = this.events;
+      if (events.mailExists || events.usernameExists || events.checkingData)
+        return;
       store.dispatch("formSignUpSubmit").then((res: any) => {
-        if (res.request.status == 201) {
+        console.log({ res });
+        if (res.request.status == 200) {
+          storage.set("__SOCKET_CODE", res.data.socketCode);
           this.$router.push({ name: "verification" });
         }
       });

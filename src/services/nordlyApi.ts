@@ -1,6 +1,6 @@
 import axios from "axios";
 import dataTracker from "./dataTracker";
-import { debounceTime } from "../helpers";
+import { debounceTime, createUrlParams } from "../helpers";
 import { AccountAccessInfor, AccountInfor } from "../common/interface";
 
 export interface CreateFastTKResponse {
@@ -16,38 +16,50 @@ export interface AccountDataResponse {
   };
 }
 
+export interface VerifyExistsParams {
+  username?: string;
+  mail?: string;
+}
+
+export interface VerifyExistsResponse {
+  hasEvenUsername: boolean | null;
+  hasEvenMail: boolean | null;
+}
+
 //API WRAPPER.
 class NordlyApi {
   devENV: boolean;
-  istaticDEV: string;
-  istaticPROD: string;
+  nordlyDEV: string;
+  nordlyPROD: string;
   baseUrl: string;
 
   constructor() {
     this.devENV = process.env.NODE_ENV === "development";
-    this.istaticDEV = `http://localhost:1234`;
-    this.istaticPROD = "https://infinity-api-nex.herokuapp.com";
-    this.baseUrl = this.devENV ? this.istaticDEV : this.istaticPROD;
+    this.nordlyDEV = `http://localhost:7050`;
+    this.nordlyPROD = "https://infinity-api-nex.herokuapp.com";
+    this.baseUrl = this.devENV ? this.nordlyDEV : this.nordlyPROD;
   }
 
   async login(user: AccountAccessInfor): Promise<any> {
     const deviceData = await dataTracker.getDeviceData();
-    return axios.post(`${this.baseUrl}/login`, Object.assign(user, deviceData));
+    return axios.post(`${this.baseUrl}/account/login`, { user, deviceData });
   }
 
   async createAccount(newUser: AccountAccessInfor): Promise<any> {
     const deviceData = await dataTracker.getDeviceData();
-    return axios.post(
-      `${this.baseUrl}/create`,
-      Object.assign(newUser, deviceData)
-    );
+    return axios.post(`${this.baseUrl}/account/create`, {
+      newUser,
+      deviceData,
+    });
   }
 
-  async verifyMailExists(mail: string): Promise<boolean> {
-    return debounceTime(
-      () => axios.get(`${this.baseUrl}/exists?mail=${mail}`),
-      800
-    ).then((res: { data: { mail: boolean } }) => res.data.mail);
+  async verifyExists(
+    inputs: VerifyExistsParams
+  ): Promise<VerifyExistsResponse> {
+    const params: string = createUrlParams(inputs);
+    return axios
+      .get(`${this.baseUrl}/account/exists?${params}`)
+      .then((res: { data: VerifyExistsResponse }) => res.data);
   }
 
   async createFastToken(

@@ -29,14 +29,6 @@ export default defineComponent({
   components: {
     LoadingForm,
   },
-  created() {
-    this.requestAuthorization();
-  },
-  sockets: {
-    connect() {
-      console.log("socket connected");
-    },
-  },
   computed: {
     formData() {
       return store.getters.formData;
@@ -45,17 +37,37 @@ export default defineComponent({
       return store.getters.events;
     },
   },
+  created() {
+    this.requestAuthorization();
+  },
+  sockets: {
+    connect() {
+      console.log("nordly socket connected");
+    },
+    authorized({ accessToken }) {
+      storage.setToken(accessToken);
+      this.$router.push({ name: "myAccount" });
+    },
+    unauthorized() {
+      alert("access was denied.");
+      this.$router.push({ name: "Forms" });
+    },
+  },
   methods: {
     requestAuthorization() {
-      console.log("hi");
       const socketCode = storage.get("__SOCKET_CODE");
-      this.$socket.client.emit(
-        "checkMail",
-        { socketCode },
-        (res: WSCheckMailError) => {
-          console.log({ checkMailResponse: res }); // "got it"
+      const form = {
+        username: this.formData.username,
+        mail: this.formData.mail,
+        socketCode,
+      };
+      this.$socket.client.emit("checkMail", form, (res: WSCheckMailError) => {
+        console.error(`form verification: ${res.msg}`);
+        alert(res.msg);
+        if (res.error && res.status === 401) {
+          this.$router.push({ name: "Forms" });
         }
-      );
+      });
     },
     imgUrl(path: string): string {
       return istatics.imgUrl({ path });

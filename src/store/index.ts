@@ -1,20 +1,21 @@
 import { createStore } from "vuex";
 import { BtnStates } from "../common/enums";
 import { nordlyApi } from "../services";
+import { debounceTime } from "../helpers";
 
 export default createStore({
   state: {
     formType: BtnStates.SIGNIN,
     events: {
-      mailAlreadyExists: false,
-      checkingMail: false,
+      usernameExists: false,
+      mailExists: false,
+      checkingData: false,
       requestError: false,
       onRequest: false,
     },
     formData: {
       username: "",
       mail: "",
-      verificationCodeField: "",
     },
   },
   mutations: {
@@ -25,9 +26,10 @@ export default createStore({
       }
       state.formType = BtnStates.SIGNIN;
     },
-    VERIFY_MAIL_FIELD(state, mailExist) {
-      state.events.mailAlreadyExists = mailExist === true;
-      state.events.checkingMail = false;
+    VERIFY_FIELD(state, data) {
+      state.events.mailExists = Boolean(data.mail);
+      state.events.usernameExists = Boolean(data.username);
+      state.events.checkingData = false;
     },
     REQUESTING(state, status) {
       state.events.onRequest = status;
@@ -45,13 +47,18 @@ export default createStore({
     signUpNextStep({ commit }, option = {}) {
       commit("NEXT_STEP_FORM_SIGN_UP", option);
     },
-    verifyMailField({ commit }, mailInput) {
-      commit("REQUESTING", true);
-      this.state.events.checkingMail = true;
-      nordlyApi.verifyMailExists(mailInput).then((mailExist) => {
-        commit("REQUESTING", false);
-        commit("VERIFY_MAIL_FIELD", mailExist);
-      });
+    verifyField({ commit }, inputs) {
+      this.state.events.checkingData = true;
+      return debounceTime(() => {
+        commit("REQUESTING", true);
+        return nordlyApi
+          .verifyExists(inputs)
+          .then((data) => {
+            commit("REQUESTING", false);
+            commit("VERIFY_FIELD", data);
+          })
+          .catch(() => commit("REQUEST_ERROR"));
+      }, 1000);
     },
     formSignInSubmit({ commit }) {
       commit("REQUESTING", true);
@@ -68,12 +75,6 @@ export default createStore({
         });
     },
     formSignUpSubmit({ commit }) {
-      if (
-        this.state.events.mailAlreadyExists &&
-        this.state.events.checkingMail
-      ) {
-        return;
-      }
       commit("REQUESTING", true);
       return nordlyApi
         .createAccount({ ...this.state.formData })
@@ -85,11 +86,6 @@ export default createStore({
           commit("REQUEST_ERROR");
           return err;
         });
-    },
-    verifyCode() {
-      // const { mail, verificationCodeField } = this.state.formData;
-      // return nordlyApi.checkCode(mail, verificationCodeField);
-      return;
     },
   },
   getters: {

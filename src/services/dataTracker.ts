@@ -1,5 +1,6 @@
 import axios from "axios";
-const FUCK_IP_GUYS = process.env.FUCK_IP_GUYS;
+
+const FUCK_IP = "https://wtfismyip.com/json";
 //const CLOUDFLARE = "https://www.cloudflare.com/cdn-cgi/trace";
 //const IPIFY = "https://api.ipify.org/?format=json";
 
@@ -31,6 +32,9 @@ class DataTracker implements DataTrackerInterface {
     const language = navigator.language;
     const doNotTrack = navigator.doNotTrack || "0";
     const cookieEnabled = navigator.cookieEnabled;
+    const locationData = FUCK_IP
+      ? await axios.get(FUCK_IP).then((res) => res.data)
+      : null;
 
     return {
       userAgent,
@@ -43,7 +47,7 @@ class DataTracker implements DataTrackerInterface {
         doNotTrack,
         cookieEnabled,
       },
-      locationData: await axios.get(FUCK_IP_GUYS).then((res) => res.data),
+      locationData,
     };
   }
 }
