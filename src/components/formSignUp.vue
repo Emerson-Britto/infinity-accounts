@@ -82,7 +82,12 @@ export default defineComponent({
     },
     schema() {
       return yup.object({
-        username: yup.string().required().min(4).max(14),
+        username: yup
+          .string()
+          .matches(/^[a-zA-Z0-9-_]+$/, "invalid username")
+          .required()
+          .min(4)
+          .max(14),
         email: yup.string().required().email().max(40),
       });
     },
