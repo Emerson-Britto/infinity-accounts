@@ -4,10 +4,10 @@
       <router-link to="profile" class="options profile">
         <img
           class="profile_Img"
-          src="http://localhost:9872/static/imgs/defaultProfileImg/profile_default_blue.png"
+          src="https://cdn-istatics.herokuapp.com/static/imgs/defaultProfile/profile_default_blue.png"
           alt="profile imagem"
         />
-        <h1 class="profile_displayName">{{ displayName }}</h1>
+        <h1 class="profile_displayName">{{ username }}</h1>
         <p class="profile_mail">{{ mail }}</p>
       </router-link>
       <div class="options recover"></div>
@@ -29,14 +29,14 @@ export default defineComponent({
   name: "MyAccount",
   data() {
     return {
-      displayName: null,
+      username: null,
       mail: null,
     };
   },
   beforeCreate() {
     nordlyApi.accountData(storage.getToken(), "account").then((res: any) => {
       const { account } = res.data;
-      this.displayName = account.displayName;
+      this.username = account.username;
       this.mail = account.mail;
     });
   },

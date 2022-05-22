@@ -74,7 +74,7 @@ class NordlyApi {
     acesssToken: string,
     part: string
   ): Promise<AccountDataResponse> {
-    return axios.get(`${this.baseUrl}?accessToken=${acesssToken}&part=${part}`);
+    return axios.get(`${this.baseUrl}/account?accessToken=${acesssToken}&part=${part}`);
   }
 }
 const nordlyApi = new NordlyApi();

@@ -4,15 +4,15 @@
       <section class="infors_profile">
         <img
           class="infors_profile_Img"
-          src="http://localhost:9872/static/imgs/defaultProfileImg/profile_default_blue.png"
+          src="https://cdn-istatics.herokuapp.com/static/imgs/defaultProfile/profile_default_blue.png"
           alt="profile imagem"
         />
-        <h1 class="infors_profile_displayName">{{ displayName }}</h1>
+        <h1 class="infors_profile_displayName">{{ username }}</h1>
         <p class="infors_profile_mail">{{ mail }}</p>
       </section>
       <section class="infors_accounts">
         <div class="infors_accounts_mail">
-          <img class="mailIcon" :src="iconUrl('mailIcon')" />
+          <img class="mailIcon" :src="iconUrl('email')" />
           <div class="input_field">
             <label class="input_label" for="mail_input">Email ID</label>
             <input
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="infors_accounts_lastSeen">
-          <img class="historyIcon" :src="iconUrl('historyIcon')" />
+          <img class="historyIcon" :src="iconUrl('history')" />
           <div class="input_field">
             <label class="input_label" for="lastSeen">Last Seen</label>
             <p id="lastSeen" class="lastSeen">{{ lastSeen }}</p>
@@ -48,7 +48,7 @@ export default defineComponent({
   name: "Profile",
   data() {
     return {
-      displayName: null,
+      username: null,
       mail: null,
       lastSeen: "",
     };
@@ -57,9 +57,9 @@ export default defineComponent({
     nordlyApi
       .accountData(storage.getToken(), "account,currentDevice")
       .then((res: any) => {
-        const { account, currentDevice = {} } = res.data;
+        const { account, currentDevice={} } = res.data;
 
-        this.displayName = account.displayName;
+        this.username = account.username;
         this.mail = account.mail;
         this.lastSeen = moment.unix(account.lastSeen).fromNow();
 
