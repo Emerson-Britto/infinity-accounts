@@ -42,7 +42,6 @@
 import { defineComponent } from "vue";
 import moment from "moment";
 import { nordlyApi, istatics } from "@/services";
-import storage from "@/common/storage";
 
 export default defineComponent({
   name: "Profile",
@@ -54,18 +53,16 @@ export default defineComponent({
     };
   },
   beforeCreate() {
-    nordlyApi
-      .accountData(storage.getToken(), "account,currentDevice")
-      .then((res: any) => {
-        const { account, currentDevice={} } = res.data;
+    nordlyApi.accountData("account,currentDevice").then((res: any) => {
+      const { account, currentDevice = {} } = res.data;
 
-        this.username = account.username;
-        this.mail = account.mail;
-        this.lastSeen = moment.unix(account.lastSeen).fromNow();
+      this.username = account.username;
+      this.mail = account.mail;
+      this.lastSeen = moment.unix(account.lastSeen).fromNow();
 
-        console.log({ account });
-        console.log({ currentDevice });
-      });
+      console.log({ account });
+      console.log({ currentDevice });
+    });
   },
   methods: {
     iconUrl(name: string): string {

@@ -23,7 +23,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { nordlyApi } from "@/services";
-import storage from "@/common/storage";
 
 export default defineComponent({
   name: "MyAccount",
@@ -34,7 +33,7 @@ export default defineComponent({
     };
   },
   beforeCreate() {
-    nordlyApi.accountData(storage.getToken(), "account").then((res: any) => {
+    nordlyApi.accountData("account").then((res: any) => {
       const { account } = res.data;
       this.username = account.username;
       this.mail = account.mail;

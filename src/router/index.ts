@@ -47,15 +47,14 @@ const routes: Array<RouteRecordRaw> = [
     component: Forms,
     beforeEnter: async (to, from, next) => {
       const after = String(to.query["after"] || "");
-      const accessToken = storage.getToken();
 
-      if (!accessToken || !after) {
+      if (!storage.hasToken() || !after) {
         sessionStorage.setItem("__afterUrl", after);
         return next({ name: "Forms" });
       }
 
       const fastToken = await nordlyApi
-        .createFastToken(accessToken, after)
+        .createFastToken(after)
         .then((r: any) => r.data.KEY)
         .catch((err: any) => {
           console.error(err);

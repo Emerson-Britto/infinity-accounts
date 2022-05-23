@@ -1,5 +1,6 @@
 import axios from "axios";
 import dataTracker from "./dataTracker";
+import storage from "../common/storage";
 import { debounceTime, createUrlParams } from "../helpers";
 import { AccountAccessInfor, AccountInfor } from "../common/interface";
 
@@ -62,19 +63,23 @@ class NordlyApi {
       .then((res: { data: VerifyExistsResponse }) => res.data);
   }
 
-  async createFastToken(
-    acesssToken: string,
-    after_url: string
-  ): Promise<CreateFastTKResponse> {
-    const params = `accessToken=${acesssToken}&afterUrl=${after_url}`;
-    return axios.get(`${this.baseUrl}/createFastToken?${params}`);
+  async createFastToken(after_url: string): Promise<CreateFastTKResponse> {
+    const accessToken = storage.getToken();
+    const params = `afterUrl=${after_url}`;
+    return axios.get(`${this.baseUrl}/createFastToken?${params}`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
   }
 
-  async accountData(
-    acesssToken: string,
-    part: string
-  ): Promise<AccountDataResponse> {
-    return axios.get(`${this.baseUrl}/account?accessToken=${acesssToken}&part=${part}`);
+  async accountData(part: string): Promise<AccountDataResponse> {
+    const accessToken = storage.getToken();
+    return axios.get(`${this.baseUrl}/account?part=${part}`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
   }
 }
 const nordlyApi = new NordlyApi();
