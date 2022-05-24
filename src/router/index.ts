@@ -47,8 +47,9 @@ const routes: Array<RouteRecordRaw> = [
     component: Forms,
     beforeEnter: async (to, from, next) => {
       const after = String(to.query["after"] || "");
+      if (!after) return next({ name: "Forms" });
 
-      if (!storage.hasToken() || !after) {
+      if (!storage.hasToken()) {
         sessionStorage.setItem("__afterUrl", after);
         return next({ name: "Forms" });
       }

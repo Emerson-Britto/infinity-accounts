@@ -1,33 +1,13 @@
 <template>
   <main>
-    <header v-show="false" id="header">
-      <router-link to="myaccount">
-        <h1 class="branding_in">NORDLY</h1>
-      </router-link>
-      <div class="shortCuts_list">
-        <router-link to="myaccount" class="shortCuts">Home</router-link>
-        <router-link to="profile" class="shortCuts">Profile</router-link>
-        <router-link to="" class="shortCuts">Security</router-link>
-        <router-link to="" class="shortCuts">Devices</router-link>
-      </div>
-      <div>
-        <img class="headerIcon" :src="iconUrl('account_circle')" />
-      </div>
-    </header>
     <router-view />
   </main>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { istatics } from "@/services";
 
 export default defineComponent({
   name: "App",
-  methods: {
-    iconUrl(name: string): string {
-      return istatics.iconUrl({ name });
-    },
-  },
 });
 </script>
 <style lang="scss">
@@ -96,34 +76,4 @@ html {
   background-color: #000;
 }
 
-#header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #040007;
-  width: 99vw;
-  height: 9vh;
-  margin-bottom: 6vh;
-}
-
-.branding_in {
-  font-family: "Padauk-Regular", "Gill Sans";
-  font-size: 1.5em;
-  margin: 0 40px;
-}
-
-.shortCuts_list {
-  display: flex;
-  justify-content: space-around;
-  width: 40%;
-}
-
-.shortCuts {
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-}
-
-.headerIcon {
-  width: 30px;
-  margin: 0 40px;
-}
 </style>

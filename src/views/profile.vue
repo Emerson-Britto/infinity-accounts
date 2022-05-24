@@ -76,8 +76,10 @@ export default defineComponent({
   margin: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 99vw;
+  height: 100vh;
 }
 
 .field_label {
