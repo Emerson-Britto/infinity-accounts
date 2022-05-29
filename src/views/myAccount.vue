@@ -10,7 +10,8 @@
         <router-link to="" class="shortCuts">Security</router-link>
         <router-link to="" class="shortCuts">Devices</router-link>
       </div>
-      <div>
+      <div class="right_header_wrapper">
+        <button id="logout_btn" @click="logout">Log out</button>
         <img class="headerIcon" :src="iconUrl('account_circle')" />
       </div>
     </header>
@@ -37,16 +38,28 @@
           </p>
         </section>
         <section class="devices_list">
-          <div class="device">
+          <div
+            v-for="(device, index) in devices"
+            :key="device.ip"
+            class="device"
+          >
             <div class="device_icon-wrapper">
-              <img class="device_icon" :src="iconUrl('device_unknown', 'black')" alt="Device Icon">
+              <img
+                class="device_icon"
+                :src="iconUrl('device_unknown', 'black')"
+                alt="Device Icon"
+              />
             </div>
             <div class="device_infors">
-              <h3 class="device_infors-os">Linux</h3>
-              <p class="device_infors-location">Itabuna, BA</p>
-              <div class="matched_device">
+              <h3 class="device_infors-os">{{ device.os.split(" ")[0] }}</h3>
+              <p class="device_infors-location">{{ device.location }}</p>
+              <div v-if="index === 0" class="matched_device">
                 <div>
-                  <img id="matched_icon" :src="iconUrl('check_circle', 'black')" alt="Matched deviced">
+                  <img
+                    id="matched_icon"
+                    :src="iconUrl('check_circle', 'black')"
+                    alt="Matched deviced"
+                  />
                 </div>
                 <p>This device</p>
               </div>
@@ -68,18 +81,32 @@ export default defineComponent({
     return {
       username: null,
       mail: null,
+      devices: [],
     };
   },
   beforeCreate() {
-    nordlyApi.accountData("account").then((res: any) => {
-      const { account } = res.data;
-      this.username = account.username;
-      this.mail = account.mail;
-    });
+    nordlyApi
+      .accountData("account,devices")
+      .then((res: any) => {
+        const { account, devices } = res.data;
+        this.username = account.username;
+        this.mail = account.mail;
+        this.devices = devices;
+
+        console.log(devices);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   methods: {
     iconUrl(name: string, color?: string): string {
       return istatics.iconUrl({ name, color });
+    },
+    logout() {
+      nordlyApi.logout().then(() => {
+        this.$router.push({ name: "Forms" });
+      });
     },
   },
 });
@@ -116,6 +143,21 @@ export default defineComponent({
 
 .shortCuts {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.right_header_wrapper {
+  display: flex;
+  align-items: center;
+}
+
+#logout_btn {
+  border: none;
+  border: 2px solid #e10000;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 0.9em;
+  background-color: rgba(255, 28, 29, 0.47);
 }
 
 .headerIcon {
@@ -209,7 +251,7 @@ strong {
       align-items: center;
       height: 40%;
       border-radius: 8px;
-      background-color: #00000A;
+      background-color: #000006;
       padding: 5px 0;
 
       &_icon-wrapper {
@@ -237,9 +279,9 @@ strong {
           display: flex;
           justify-content: space-around;
           align-items: center;
+          margin: 5px 0;
 
           & > div {
-            margin: 0 8px 0 0;
             display: grid;
             place-items: center;
             width: 20px;

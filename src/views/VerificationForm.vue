@@ -21,7 +21,7 @@ import { defineComponent } from "vue";
 import LoadingForm from "@/components/loadingForm.vue";
 import store from "@/store";
 import storage from "@/common/storage";
-import { istatics } from "@/services";
+import { istatics, nordlyApi } from "@/services";
 import { WSCheckMailError } from "@/common/interface";
 
 export default defineComponent({
@@ -74,26 +74,6 @@ export default defineComponent({
     },
     backForm() {
       this.$router.push({ name: "Forms" });
-    },
-    verifty() {
-      store
-        .dispatch("verifyCode")
-        .then((res: any) => {
-          if (res.request.status == 200) {
-            store.dispatch("formSignInSubmit").then((res) => {
-              storage.setToken(res.data.ACCESS_TOKEN);
-              this.$router.push({ name: "myAccount" });
-            });
-          }
-        })
-        .catch((err: any) => {
-          if (err.request.status == 403) {
-            alert("invalid code");
-          }
-          if (err.request.status == 410) {
-            alert("code expired or never existed");
-          }
-        });
     },
   },
 });

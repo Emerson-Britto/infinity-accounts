@@ -39,6 +39,10 @@ class Storage {
     const data: string = localStorage.getItem(this.tokenSlotName) || "";
     return JSON.parse(data);
   }
+
+  delToken(): void {
+    localStorage.removeItem(this.tokenSlotName);
+  }
 }
 
 const storage = new Storage();

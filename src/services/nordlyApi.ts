@@ -73,13 +73,44 @@ class NordlyApi {
     });
   }
 
+  async logout() {
+    const accessToken = storage.getToken();
+    return axios
+      .get(`${this.baseUrl}/account/logout`, {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((r: any) => {
+        this.delToken();
+        return r;
+      });
+  }
+
   async accountData(part: string): Promise<AccountDataResponse> {
     const accessToken = storage.getToken();
-    return axios.get(`${this.baseUrl}/account?part=${part}`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
+    return axios
+      .get(`${this.baseUrl}/account?part=${part}`, {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .catch((err: any) => this.onCatch(err));
+  }
+
+  async onCatch(err: any) {
+    const error = err.response?.data?.error || "";
+    const invalidTokenError = error.name === "InvalidTokenError";
+    if (invalidTokenError) this.delToken();
+    return err;
+  }
+
+  setToken(accessToken: string): void {
+    storage.setToken(accessToken);
+  }
+
+  delToken() {
+    storage.delToken();
   }
 }
 const nordlyApi = new NordlyApi();
